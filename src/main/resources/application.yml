@@ -1,0 +1,110 @@
+server.port: 8888
+langchain4j:
+  open-ai:
+    chat-model:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: ${API-KEY}
+      model-name: glm-4.7
+#      base-url: http://localhost:11434/v1
+#      api-key: ollama
+#      model-name: deepseek-r1:1.5b
+      log-requests: false
+      log-responses: false
+      timeout: 60s
+      max-retries: 3
+    streaming-chat-model:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: ${API-KEY}
+      model-name: glm-4.7
+#      base-url: http://localhost:11434/v1
+#      api-key: ollama
+#      model-name: qwen3:0.6b
+      log-requests: false
+      log-responses: false
+      timeout: 60s
+      max-retries: 3
+    embedding-model:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: ${API-KEY}
+      model-name: text-embedding-v3
+#      base-url: http://localhost:11434/v1
+#      api-key: ollama
+#      model-name: nomic-embed-text:latest
+      log-requests: false
+      log-responses: false
+      timeout: 60s
+      max-retries: 5
+      max-segments-per-batch: 10
+  community:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  level:
+    root: INFO
+    dev.langchain4j: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/jsh_erp?useSSL=false&serverTimezone=UTC
+    username: root
+    password: wjh123123
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+app:
+  tenant:
+    default-tenant-id: 160
+  ai:
+    memory:
+      max-messages: 14
+      ttl-seconds: 86400
+      key-prefix: erp:chat-memory
+    observability:
+      enabled: true
+      trace-persistence-enabled: true
+      eval-enabled: true
+      slow-threshold-ms: 5000
+      default-summary-window-hours: 24
+      max-tool-result-preview-length: 400
+      max-response-preview-length: 12000
+    rag:
+      resource-pattern: classpath*:content/*
+      index-name: erp-kb-index-v1
+      vector-prefix: "erp:kb:v1:segment:"
+      manifest-key: erp:kb:v1:manifest
+      retrieval:
+        min-score: 0.68
+        max-results: 4
+        answerable-min-score: 0.74
+        min-segment-length: 40
+      chunk:
+        page-window: 1
+        max-segment-size: 350
+        overlap: 60
+      ingestion:
+        auto-sync-on-startup: true
+      pdf:
+        ocr-enabled: false
+        ocr-language: chi_sim+eng
+        render-dpi: 200
+        min-text-length: 80
+        min-chinese-ratio: 0.15
+        max-replacement-char-ratio: 0.10
