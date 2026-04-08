@@ -1,0 +1,29 @@
+File=D:\电脑管家迁移文件\微信聊天记录搬家\xwechat_files\wxid_nufc7mpofdny22_7cfa\msg\file\2026-03\策划案模板.docx
+Paragraphs=53
+Sections=3
+P1	style=正文	font=仿宋	size=18	bold=-1	align=0	firstIndent=18.05	leftIndent=0	lineSpacingRule=0	text=2024—2025学年 第X学期
+P3	style=正文	font=黑体	size=36	bold=0	align=1	firstIndent=0	leftIndent=0	lineSpacingRule=4	text=“XXXXX，XXXX”
+P5	style=正文	font=黑体	size=36	bold=0	align=1	firstIndent=0	leftIndent=0	lineSpacingRule=4	text=活
+P7	style=正文	font=黑体	size=36	bold=0	align=1	firstIndent=0	leftIndent=0	lineSpacingRule=4	text=动
+P9	style=正文	font=黑体	size=36	bold=0	align=1	firstIndent=0	leftIndent=0	lineSpacingRule=4	text=策
+P11	style=正文	font=黑体	size=36	bold=0	align=1	firstIndent=0	leftIndent=0	lineSpacingRule=4	text=划
+P15	style=正文	font=仿宋	size=16	bold=0	align=4	firstIndent=0	leftIndent=231	lineSpacingRule=0	text=运城学院学工部
+P16	style=正文	font=仿宋	size=16	bold=0	align=4	firstIndent=0	leftIndent=231	lineSpacingRule=0	text=就业服务大厅
+P17	style=正文	font=仿宋	size=16	bold=0	align=4	firstIndent=0	leftIndent=231	lineSpacingRule=0	text=2024年XX月XX日
+P20	style=正文	font=宋体	size=22	bold=0	align=1	firstIndent=0	leftIndent=0	lineSpacingRule=0	text=“XXXX，XXXX”
+P22	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=活动背景
+P24	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=二、活动目的
+P26	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=0	leftIndent=31.5	lineSpacingRule=4	text=三、活动主题
+P28	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=0	text=活动单位
+P30	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=活动形式
+P32	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=活动对象
+P34	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=活动内容及要求
+P36	style=标题 2 字符	font=黑体	size=16	bold=-1	align=3	firstIndent=32.15	leftIndent=0	lineSpacingRule=1	text=注意事项
+P38	style=标题 2 字符	font=黑体	size=16	bold=-1	align=3	firstIndent=32.15	leftIndent=0	lineSpacingRule=1	text=九、联系方式
+P40	style=标题 2 字符	font=黑体	size=16	bold=-1	align=3	firstIndent=32.15	leftIndent=0	lineSpacingRule=4	text=十、未尽事宜另行通知，本次活动最终解释权归学生工作部。
+P44	style=正文	font=仿宋	size=16	bold=0	align=4	firstIndent=0	leftIndent=231	lineSpacingRule=0	text=运城学院学工部
+P45	style=正文	font=仿宋	size=16	bold=0	align=4	firstIndent=0	leftIndent=231	lineSpacingRule=0	text=就业服务大厅
+P46	style=正文	font=仿宋	size=16	bold=0	align=4	firstIndent=0	leftIndent=231	lineSpacingRule=0	text=2024年XX月XX日
+P51	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=-48	leftIndent=48	lineSpacingRule=0	text=附件：1.
+P52	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=48	leftIndent=0	lineSpacingRule=0	text=2.
+P53	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=48	leftIndent=0	lineSpacingRule=0	text=3.

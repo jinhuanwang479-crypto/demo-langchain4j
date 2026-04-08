@@ -1,0 +1,4 @@
+interface:
+  display_name: "Markdown 转 PDF"
+  short_description: "把 Markdown 文档转换成可交付的 PDF。"
+  default_prompt: "使用 $markdown-to-pdf 把这个 Markdown 文档转换成排版清晰的 PDF。"

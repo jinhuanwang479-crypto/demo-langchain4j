@@ -1,0 +1,49 @@
+File=D:\电脑管家迁移文件\微信聊天记录搬家\xwechat_files\wxid_nufc7mpofdny22_7cfa\msg\file\2026-03\策划文件格式整理.doc
+Paragraphs=48
+Sections=1
+P1	style=正文	font=宋体	size=22	bold=0	align=1	firstIndent=0	leftIndent=0	lineSpacingRule=4	text=策划文件整理格式
+P2	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=一、页面
+P3	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=1.有封面的情况下，必须留有底封(文件最后留有空白页)。封面使用竖排文本框居中写清标题，右下角处右空两字编排落款。
+P4	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=2.每页22行，每行28字符，并撑满版心。特定情况可以作适当调整。
+P5	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=3.除大标题外，全文首行缩进2字符。标题行距固定值28磅（固定词语不能分行），正文行距固定值28磅（特殊情况可调整为26或30磅）。
+P6	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=4.页面最后一行不得是标题行。
+P7	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=二、标点
+P8	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=1.除特殊要求外，文件所有标点用全角（中文）字符。
+P9	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=2.标题后无正文（标题行本行无正文）均不用冒号。
+P10	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=3.词组、短语后不用句号。（如举办单位、活动地点、二级标题后等）
+P11	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=4.破折号占2字符。
+P12	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=三、标题
+P13	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=分一行或多行居中排布。回行时，要做到词意完整，排列对称，长短适宜，间距恰当，标题排列应当使用梯形或菱形。
+P14	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=四、字体字号
+P15	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=无论标题或正文，英文及数字字体均为“Time New Roman”
+P16	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=(具体操作:第一步:点击工具栏中的“编辑”——“全选”；第二步:点击工具栏中的“格式”——“字体”——“西文字体"；第三步:在“西文字体” 下拉框中选择“Times New Roman”——点击“确定”。)
+P17	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=封面：黑体小初加粗
+P18	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=大标题：宋体2号不加粗
+P19	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=正文：仿宋3号不加粗
+P20	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=一级标题：黑体3号不加粗，序号格式为“一、”
+P21	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=二级标题：楷体3号加粗，序号格式为“（一）”后无标点
+P22	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=三级标题：仿宋3号加粗 ，序号格式为 “1.”
+P23	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=四级标题：仿宋3号不加粗，序号格式为“(1)” 后无标点
+P24	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=五级标题：仿宋3号不加粗，序号格式为“①”后无标点
+P27	style=正文	font=黑体	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=五、附件说明
+P28	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=如有附件，在正文下空一行左空二字（首行缩进2字符）编排“附件”二字，后标全角冒号和附件名称。如有多个附件，使用阿拉伯数字标注附件顺序号(如“附件：1.XXXXX”) ；附件名称后不加标点符号。附件名称较长需回行时，应当与上一行附件名称的首字对齐。
+P29	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=附件页应与正文一起装订，并在附件页左上角第一行顶格标识"附件"，有序号带上序号，无需使用标点符号。
+P30	style=正文	font=黑体	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=六、落款
+P31	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=成文日期以负责人签发日期为准，一般右空四字编排，印章用红色，不得出现空白印章。一般在成文日期之上、以成文日期为准居中编排发文机关署名，印章端正、居中下压发文机关署名和成文日期，使发文机关署名和成文日期居印章中心位置，印章顶端应当上距正文(或附件说明)一行之内。
+P32	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=落款不能单独置一页，可通过调整行距字符间距使正文与落款同时存在。
+P33	style=正文	font=黑体	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=七、时间
+P34	style=正文	font=仿宋	size=16	bold=-1	align=3	firstIndent=32.15	leftIndent=0	lineSpacingRule=4	text=1.时间格式
+P35	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=xx年xx月xx日xx：xx
+P36	style=正文	font=仿宋	size=16	bold=9999999	align=3	firstIndent=32.15	leftIndent=0	lineSpacingRule=4	text=注：写清年月日，必要时写清时间点，采用24小时计时法。年份应标全称，月、日不编虚位，即1不编为01。
+P37	style=正文	font=仿宋	size=16	bold=-1	align=3	firstIndent=32.15	leftIndent=0	lineSpacingRule=4	text=2.时间段
+P38	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=xxxx年xx月xx日xx:xx至(不可用"-")xxxx年xx月xx日xx:xx
+P39	style=正文	font=仿宋	size=16	bold=9999999	align=3	firstIndent=32.15	leftIndent=0	lineSpacingRule=4	text=注：不跨年时“至”字后不写年份，不跨月时“至”字后不写年份和月份，同一天时“至”字后仅写时间点。
+P40	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=八、页码
+P41	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=1.一般用4号半角宋体阿拉伯数字，编排在文件版心下边缘之下，数字左右各放一条一字线，一字线上距版心下边缘7 mm。
+P42	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=2.单页码居右空一字，双页码居左空一字。
+P43	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=3.文件的版记页前有空白页的，空白页和版记页均不编排页码。
+P44	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=4.文件的附件与正文一起装订时，页码应当连续编排。
+P45	style=正文	font=黑体	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=九、表格
+P46	style=正文	font=仿宋	size=16	bold=0	align=0	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=表格字体一般为宋体，格式不做具体规定，按实际情况自行修改，注意美观。
+P47	style=正文	font=黑体	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=十、装订
+P48	style=正文	font=仿宋	size=16	bold=0	align=3	firstIndent=32	leftIndent=0	lineSpacingRule=4	text=平订，订眼距版面上下边缘各70 mm（允许误差±4mm），左边缘10mm处，无坏钉、漏钉、重钉，钉脚平伏牢固。

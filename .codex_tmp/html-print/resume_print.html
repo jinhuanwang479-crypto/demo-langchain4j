@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<body>
+    <div class="flex-conta  iner">
+        <div class="intro">
+            <h2>缪志瑄</h2>
+            <p>电话：18479407004 | 邮箱：2926055887@qq.com</p>
+            <p>21岁 | 26届本科在读</p>
+            <p>求职意向：Java后端开发工程师（实习）</p>
+        </div>
+        <div class="photo">
+            <img src="简历照.jpg" alt="个人照片">
+        </div>
+    </div>
+    <h3><strong>教育背景</strong></h3>
+    <hr/>
+    <div class="container">
+        <div class="header">
+            <div class="title">南昌航空大学</div>
+            <div class="date-location">
+                <div><strong>2022年9月 - 2026年6月</strong></div>
+            </div>
+        </div>
+        <div class="content">
+            <p>软件工程 - 本科 - 软件学院</p>
+        </div>
+        <div class="header">
+            <div class="title">获奖情况</div>
+        </div>
+        <div>
+            <li>2024 团体程序设计天梯赛 <strong>国赛团体三等奖 省赛团体二等奖</strong></li>
+            <li>2023 睿抗机器人开发者大赛编程技能赛 <strong>国赛三等奖</strong></li>
+            <li>2023 百度之星程序设计大赛 <strong>铜奖</strong></li>
+            <li>2024 蓝桥杯 <strong>国赛三等奖</strong></li>
+            <li>2023 蓝桥杯 <strong>省赛二等奖</strong></li>
+        </div>
+    </div>
+    <h3><strong>专业技能<strong></h3>
+    <hr/>
+    <ul>
+        <li><strong>Java基础</strong>：熟悉Java基础知识，了解面向对象编程、异常处理、集合框架、反射机制等相关知识；</li>
+        <li><strong>开发框架</strong>：熟悉SpringMVC、SpringBoot、Mybatis等开发框架，了解IOC、AOP设计思想；</li>
+        <li><strong>MySQL</strong>：熟悉关系型数据库MySQL的使用，了解存储引擎特性、事务隔离级别、索引优化策略、锁机制等；</li>
+        <li><strong>Redis</strong>：熟悉Redis的使用，了解Redis的数据类型、持久化机制，了解缓存穿透、击穿和雪崩的解决方案；</li>
+        <li><strong>JUC</strong>：熟悉Java并发编程，了解synchronized、ReentrantLock、AQS、ThreadLocal等原理；</li>
+        <li><strong>JVM</strong>：熟悉JVM运行时内存机制，对象创建过程、类加载机制、垃圾回收机制等；</li>
+    </ul>
+<hr/>
+<ul>
+    
+</ul>
+    <h3><strong>项目经验<strong></h3>
+    <hr/>
+    <p><strong>隙影流光</strong></p>
+    <ul>
+        <li><strong>项目描述</strong>：隙影流光是一个前后端分离的、面向各类开发者的技术内容分享与交流平台，包括前端PC和管理后台，旨在打造一个激发开发者创作灵感，传播优质技术内容，陪伴开发者快速成长的技术社区。</li>
+        <li><strong>责任描述</strong>：作为核心研发人员，主要负责登录认证、全模块消息通知以及AI应用开发的开发工作。</li>
+        <li><strong>技术栈</strong>：Spring Boot、MyBatis-Plus、MySQL、Redis、ElasticSearch、RabbitMQ、MongoDB、Docker。</li>
+        <li><strong>核心技术</strong>：</li>
+        <ul>
+            <li>通过<strong> JWT + Redis </strong>双重校验的方式实现用户登录拦截和权限校验，结合ThreadLocal封装线程隔离上下文，降低数据库查询用户信息的频率。</li>
+            <li>通过验证码和前端保持半长链接映射关系，用户扫码关注公众号并输入验证码后发起回调，识别用户信息并找到对应半长链接，实现<strong>系统自动登录</strong>。</li>
+            <li>采用AI大模型流式API实现响应信息逐字推送，实现<strong>“信息逐步输出”</strong>效果，平均响应延迟控制在500ms以内，提升用户在复杂响应情况下的等待体验。</li>
+            <li>应用<strong>策略模式</strong>来支持多家AI大模型的灵活对接，目前已对接了DeepSeek、豆包、讯飞星火的API，并实现了一个可以自定义角色预设的在线AI助手。</li>
+            <li>通过<strong> Redis </strong>的<strong> ZSet </strong>数据结构实现计数统计和用户活跃排行榜，并通过先写 MySQL ，再删除 Redis 的方案来保证高并发场景下的缓存一致性。</li>
+            <li>采用<strong> Redisson 看门狗策略</strong>优化缓存结构，针对热点 key 的并发访问进行同步，防止其失效时导致的缓存击穿。</li>
+            <li>利用<strong> AOP </strong>切面技术将用户评论、点赞、收藏等消息发送到<strong> RabbitMQ </strong>，实现消息的异步解耦，提升系统效率和服务稳定性，平均响应时间控制在80ms以内。</li>
+            </ul>
+    </ul>
+    <br>
+    <p><strong>食光探</strong></p>
+    <ul>
+        <li><strong>项目描述</strong>：食光探是一个前后端分离的、面向 C 端用户的美食分享交流平台，支持短信登录、优惠券秒杀、商户浏览、用户签到、关注推送等功能。</li>
+        <li><strong>技术栈</strong>：Spring Boot、MyBatis-Plus、Redis、RabbitMQ、MySQL。</li>
+        <li><strong>核心技术</strong>：</li>
+        <ul>
+            <li>构建基于<strong> Redis </strong>的缓存系统，使用缓存空值防止缓存穿透；配置动态 TTL 策略防止缓存雪崩，结合互斥锁与逻辑过期机制应对热点商户数据失效引起的缓存击穿问题。</li>
+            <li>基于 Redis 存储验证码与用户 Token，实现登录认证；使用<strong>二级拦截机制</strong>完成 Token 自动续期，降低 Redis 与数据库的读写压力。</li>
+            <li>使用<strong> Lua </strong>脚本原子操作库存和下单资格校验，结合<strong> RabbitMQ </strong>构建异步处理链路，减轻核心系统峰值压力，实现请求削峰填谷。</li>
+            <li>利用 Redis 实现全局唯一 ID 发号器，配合<strong>乐观锁</strong>防止库存超卖；使用 <strong>Redisson 分布式锁</strong>实现一人一单逻辑。</li>
+        </ul>
+    </ul>
+</body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px; /* 整体字体调小 */
+            line-height: 1.4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 14px; /* 标题字体稍大 */
+            font-weight: bold;
+        }
+        .date-location {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+        }
+        .content {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        h2 {
+            font-size: 18px; /* 主标题字体 */
+            margin: 0;
+        }
+        h3 {
+            font-size: 14px; /* 副标题字体 */
+            margin: 10px 0 5px 0;
+        }
+        p {
+            margin: 5px 0;
+        }
+        ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 10px 0;
+        }
+        .flex-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px;
+            margin-bottom: 5px;
+            margin-top: 5px;
+        }
+        .flex-container img {
+            width: 72px;
+            height: 102px;
+            margin-left: 80px;
+        }
+        .intro {
+            width: fit-content;  /* 文字块宽度自适应内容 */
+            margin: 0 auto;      /* 严格居中 */
+            text-align: center;
+        }
+        .photo {
+            position: absolute;
+            right: 40px;
+            top: 10px;
+            transform: translateY(-0%); /* 垂直居中对齐 */
+        }
+        .photo img {
+            max-width: 90px;
+            height: auto;
+            border-radius: 8px;
+        }
+    @page { size: A4; margin: 10mm; }
+html, body { background: white; }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.photo { display: none !important; }
+ul, .container { page-break-inside: avoid; }
+</style>
+</head>
+</html>中对齐 */
+        }
+        .photo img {
+            max-width: 90px;
+            height: auto;
+            border-radius: 8px;
+        }
+    @page { size: A4; margin: 10mm; }
+html, body { background: white; }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.photo { display: none !important; }
+ul, .container { page-break-inside: avoid; }
+</style>
+</head>
+</html>
