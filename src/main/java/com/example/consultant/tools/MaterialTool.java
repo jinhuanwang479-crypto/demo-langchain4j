@@ -1,6 +1,12 @@
 package com.example.consultant.tools;
 
-import com.example.consultant.pojo.*;
+import com.example.consultant.pojo.MaterialAttribute;
+import com.example.consultant.pojo.MaterialCategory;
+import com.example.consultant.pojo.MaterialDetailResult;
+import com.example.consultant.pojo.MaterialInfo;
+import com.example.consultant.pojo.MaterialProperty;
+import com.example.consultant.pojo.MaterialStockResult;
+import com.example.consultant.pojo.ToolActionResult;
 import com.example.consultant.service.MaterialService;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
@@ -45,11 +51,12 @@ public class MaterialTool {
         return materialService.searchMaterials(keyword, categoryId, null, limit);
     }
 
-    @Tool("查看当前商品清单或者明细（用户问“有哪些商品”时直接调用，不追问）")
+    @Tool("查看当前商品清单或者明细")
     public List<MaterialInfo> listCurrentMaterials(@P("返回条数，可选，默认20条") Integer limit) {
         log.info("调用当前商品列表工具: limit={}", limit);
         return materialService.listCurrentMaterials(null, limit);
     }
+
     @Tool("查询商品详情")
     public MaterialDetailResult getMaterialDetail(@P("商品ID") Long materialId) {
         return materialService.getMaterialDetail(materialId, null);
@@ -57,9 +64,9 @@ public class MaterialTool {
 
     @Tool("创建商品，调用前必须先确认categoryId、unit和unitId，其中unit必须是用户确认的实际单位值")
     public ToolActionResult createMaterial(@P("商品名称") String name,
-                                           @P("分类ID，必填，需先通过查询商品分类工具解析") Long categoryId,
-                                           @P("单位名称，必填，需填写实际单位值，如支、包、kg") String unit,
-                                           @P("单位ID，必填，需先通过查询计量单位工具解析") Long unitId,
+                                           @P("分类ID，必填") Long categoryId,
+                                           @P("单位名称，必填") String unit,
+                                           @P("单位ID，必填") Long unitId,
                                            @P("型号，可选") String model,
                                            @P("规格，可选") String standard,
                                            @P("品牌，可选") String brand,

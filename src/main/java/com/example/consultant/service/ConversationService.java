@@ -12,6 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+/**
+ * 会话历史服务。
+ * <p>
+ * 负责 AI 对话历史的保存、查询、删除和清空，
+ * 并与底层聊天记忆存储保持同步。
+ * </p>
+ */
 @Service
 public class ConversationService {
 
@@ -24,6 +31,9 @@ public class ConversationService {
     @Autowired
     private ChatMemoryStore chatMemoryStore;
 
+    /**
+     * 保存或更新一轮对话。
+     */
     @Transactional
     public void saveConversation(String memoryId, String userMessage, String assistantResponse, List<Map<String, Object>> allMessages) {
         // 会话数据按“租户:用户”做逻辑隔离，避免不同租户下相同 userId 串数据。
@@ -101,6 +111,9 @@ public class ConversationService {
         }
     }
 
+    /**
+     * 查询当前用户的全部会话摘要。
+     */
     public List<Map<String, Object>> getAllConversations() {
         String currentUserId = UserContextUtil.getTenantScopedUserId();
         if (currentUserId == null || currentUserId.isEmpty()) {
@@ -122,6 +135,9 @@ public class ConversationService {
         return result;
     }
 
+    /**
+     * 查询指定会话的消息详情。
+     */
     public List<Map<String, Object>> getConversationDetail(String memoryId) {
         String currentUserId = UserContextUtil.getTenantScopedUserId();
 
@@ -146,6 +162,9 @@ public class ConversationService {
         return result;
     }
 
+    /**
+     * 删除指定会话及其历史消息。
+     */
     @Transactional
     public boolean deleteConversation(String memoryId) {
         try {
@@ -166,6 +185,9 @@ public class ConversationService {
         }
     }
 
+    /**
+     * 清空当前用户的全部会话历史。
+     */
     @Transactional
     public void clearAllConversations() {
         String currentUserId = UserContextUtil.getTenantScopedUserId();
@@ -179,6 +201,9 @@ public class ConversationService {
         conversationMapper.deleteAllByUserId(currentUserId);
     }
 
+    /**
+     * 根据用户首条消息生成会话标题。
+     */
     private String generateTitle(String content) {
         if (content == null || content.trim().isEmpty()) {
             return "新对话";

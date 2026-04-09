@@ -3,14 +3,17 @@ package com.example.consultant.config;
 import com.example.consultant.rag.StrictContentRetriever;
 import com.example.consultant.service.AiObservationRegistry;
 import com.example.consultant.service.AiRetrievalAuditService;
-import dev.langchain4j.community.store.embedding.redis.RedisEmbeddingStore;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
+import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +33,8 @@ import java.util.Map;
  * 让 LangChain4j 在装配 ConsultantService 时直接复用这些组件。
  */
 public class CommonConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(CommonConfig.class);
 
     @Bean
     /**
@@ -53,19 +58,25 @@ public class CommonConfig {
      * 该 Bean 既负责保存 embedding 向量，也负责把 metadata 建成 RediSearch 索引字段，
      * 便于后续检索时返回文档名、页码、分片序号等上下文信息。
      */
-    public RedisEmbeddingStore redisEmbeddingStore(RedisProperties redisProperties,
-                                                   EmbeddingModel embeddingModel,
-                                                   AiRagProperties aiRagProperties) {
-        return RedisEmbeddingStore.builder()
-                .host(redisProperties.getHost())
-                .port(redisProperties.getPort())
-                .user(redisProperties.getUsername())
-                .password(redisProperties.getPassword())
-                .indexName(aiRagProperties.getIndexName())
-                .prefix(aiRagProperties.getVectorPrefix())
-                .dimension(embeddingModel.dimension())
-                .metadataConfig(metadataConfig())
-                .build();
+    public EmbeddingStore<TextSegment> redisEmbeddingStore(RedisProperties redisProperties,
+                                                           EmbeddingModel embeddingModel,
+                                                           AiRagProperties aiRagProperties) {
+        try {
+            return dev.langchain4j.community.store.embedding.redis.RedisEmbeddingStore.builder()
+                    .host(redisProperties.getHost())
+                    .port(redisProperties.getPort())
+                    .user(redisProperties.getUsername())
+                    .password(redisProperties.getPassword())
+                    .indexName(aiRagProperties.getIndexName())
+                    .prefix(aiRagProperties.getVectorPrefix())
+                    .dimension(embeddingModel.dimension())
+                    .metadataConfig(metadataConfig())
+                    .build();
+        } catch (RuntimeException ex) {
+            log.warn("Redis 向量库不可用，RAG 将退化为内存空库并继续启动: host={}, port={}, reason={}",
+                    redisProperties.getHost(), redisProperties.getPort(), ex.getMessage());
+            return new InMemoryEmbeddingStore<>();
+        }
     }
 
     @Bean
@@ -74,7 +85,7 @@ public class CommonConfig {
      * 与普通 ContentRetriever 不同，这里额外注入了 MeterRegistry、请求注册表、检索审计服务，
      * 用于记录检索耗时、命中数、拒答原因，并把检索结果回填到请求级 trace 中。
      */
-    public ContentRetriever contentRetriever(RedisEmbeddingStore redisEmbeddingStore,
+    public ContentRetriever contentRetriever(EmbeddingStore<TextSegment> redisEmbeddingStore,
                                              EmbeddingModel embeddingModel,
                                              AiRagProperties aiRagProperties,
                                              MeterRegistry meterRegistry,

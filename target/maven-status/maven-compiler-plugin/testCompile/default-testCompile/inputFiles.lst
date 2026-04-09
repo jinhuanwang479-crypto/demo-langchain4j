@@ -3,4 +3,5 @@ E:\langchain4j\demo-langchain4j\src\test\java\com\example\consultant\rag\Knowled
 E:\langchain4j\demo-langchain4j\src\test\java\com\example\consultant\rag\StrictContentRetrieverTest.java
 E:\langchain4j\demo-langchain4j\src\test\java\com\example\consultant\repository\RedisChatMemoryStoreTest.java
 E:\langchain4j\demo-langchain4j\src\test\java\com\example\consultant\ReservationServiceTest.java
+E:\langchain4j\demo-langchain4j\src\test\java\com\example\consultant\service\AiResponseEvaluationServiceTest.java
 E:\langchain4j\demo-langchain4j\src\test\java\com\example\consultant\service\MaterialServiceTest.java

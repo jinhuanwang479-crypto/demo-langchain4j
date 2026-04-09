@@ -4,6 +4,7 @@ import com.example.consultant.pojo.DashboardBillSummary;
 import com.example.consultant.pojo.DashboardFinanceSummary;
 import com.example.consultant.pojo.MaterialStatisticResult;
 import com.example.consultant.pojo.StockWarningResult;
+import com.example.consultant.pojo.TrendSeriesPoint;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -120,4 +121,205 @@ public interface ReportMapper {
             limit #{limit}
             """)
     List<StockWarningResult> getStockWarning(@Param("tenantId") Long tenantId, @Param("limit") Integer limit);
+
+    @Select({
+            "<script>",
+            "select date_format(h.oper_time, '%Y-%m-%d') as periodLabel,",
+            "       coalesce(sum(h.total_price), 0) as amount,",
+            "       count(1) as recordCount",
+            "from jsh_depot_head h",
+            "where h.delete_flag = '0'",
+            "  and h.tenant_id = #{tenantId}",
+            "  and h.sub_type in",
+            "  <foreach collection='subTypes' item='subType' open='(' separator=',' close=')'>",
+            "    #{subType}",
+            "  </foreach>",
+            "  and (#{startTime} is null or h.oper_time &gt;= #{startTime})",
+            "  and (#{endTime} is null or h.oper_time &lt;= #{endTime})",
+            "group by date_format(h.oper_time, '%Y-%m-%d')",
+            "order by min(h.oper_time)",
+            "</script>"
+    })
+    List<TrendSeriesPoint> getBusinessTrendSeriesByDay(@Param("subTypes") List<String> subTypes,
+                                                       @Param("startTime") LocalDateTime startTime,
+                                                       @Param("endTime") LocalDateTime endTime,
+                                                       @Param("tenantId") Long tenantId);
+
+    @Select({
+            "<script>",
+            "select date_format(date_sub(h.oper_time, interval weekday(h.oper_time) day), '%Y-%m-%d') as periodLabel,",
+            "       coalesce(sum(h.total_price), 0) as amount,",
+            "       count(1) as recordCount",
+            "from jsh_depot_head h",
+            "where h.delete_flag = '0'",
+            "  and h.tenant_id = #{tenantId}",
+            "  and h.sub_type in",
+            "  <foreach collection='subTypes' item='subType' open='(' separator=',' close=')'>",
+            "    #{subType}",
+            "  </foreach>",
+            "  and (#{startTime} is null or h.oper_time &gt;= #{startTime})",
+            "  and (#{endTime} is null or h.oper_time &lt;= #{endTime})",
+            "group by date_format(date_sub(h.oper_time, interval weekday(h.oper_time) day), '%Y-%m-%d')",
+            "order by min(h.oper_time)",
+            "</script>"
+    })
+    List<TrendSeriesPoint> getBusinessTrendSeriesByWeek(@Param("subTypes") List<String> subTypes,
+                                                        @Param("startTime") LocalDateTime startTime,
+                                                        @Param("endTime") LocalDateTime endTime,
+                                                        @Param("tenantId") Long tenantId);
+
+    @Select({
+            "<script>",
+            "select date_format(h.oper_time, '%Y-%m') as periodLabel,",
+            "       coalesce(sum(h.total_price), 0) as amount,",
+            "       count(1) as recordCount",
+            "from jsh_depot_head h",
+            "where h.delete_flag = '0'",
+            "  and h.tenant_id = #{tenantId}",
+            "  and h.sub_type in",
+            "  <foreach collection='subTypes' item='subType' open='(' separator=',' close=')'>",
+            "    #{subType}",
+            "  </foreach>",
+            "  and (#{startTime} is null or h.oper_time &gt;= #{startTime})",
+            "  and (#{endTime} is null or h.oper_time &lt;= #{endTime})",
+            "group by date_format(h.oper_time, '%Y-%m')",
+            "order by min(h.oper_time)",
+            "</script>"
+    })
+    List<TrendSeriesPoint> getBusinessTrendSeriesByMonth(@Param("subTypes") List<String> subTypes,
+                                                         @Param("startTime") LocalDateTime startTime,
+                                                         @Param("endTime") LocalDateTime endTime,
+                                                         @Param("tenantId") Long tenantId);
+
+    @Select({
+            "<script>",
+            "select date_format(h.bill_time, '%Y-%m-%d') as periodLabel,",
+            "       coalesce(sum(h.change_amount), 0) as amount,",
+            "       count(1) as recordCount",
+            "from jsh_account_head h",
+            "where h.delete_flag = '0'",
+            "  and h.tenant_id = #{tenantId}",
+            "  and h.type in",
+            "  <foreach collection='types' item='type' open='(' separator=',' close=')'>",
+            "    #{type}",
+            "  </foreach>",
+            "  and (#{startTime} is null or h.bill_time &gt;= #{startTime})",
+            "  and (#{endTime} is null or h.bill_time &lt;= #{endTime})",
+            "group by date_format(h.bill_time, '%Y-%m-%d')",
+            "order by min(h.bill_time)",
+            "</script>"
+    })
+    List<TrendSeriesPoint> getFinanceTrendSeriesByDay(@Param("types") List<String> types,
+                                                      @Param("startTime") LocalDateTime startTime,
+                                                      @Param("endTime") LocalDateTime endTime,
+                                                      @Param("tenantId") Long tenantId);
+
+    @Select({
+            "<script>",
+            "select date_format(date_sub(h.bill_time, interval weekday(h.bill_time) day), '%Y-%m-%d') as periodLabel,",
+            "       coalesce(sum(h.change_amount), 0) as amount,",
+            "       count(1) as recordCount",
+            "from jsh_account_head h",
+            "where h.delete_flag = '0'",
+            "  and h.tenant_id = #{tenantId}",
+            "  and h.type in",
+            "  <foreach collection='types' item='type' open='(' separator=',' close=')'>",
+            "    #{type}",
+            "  </foreach>",
+            "  and (#{startTime} is null or h.bill_time &gt;= #{startTime})",
+            "  and (#{endTime} is null or h.bill_time &lt;= #{endTime})",
+            "group by date_format(date_sub(h.bill_time, interval weekday(h.bill_time) day), '%Y-%m-%d')",
+            "order by min(h.bill_time)",
+            "</script>"
+    })
+    List<TrendSeriesPoint> getFinanceTrendSeriesByWeek(@Param("types") List<String> types,
+                                                       @Param("startTime") LocalDateTime startTime,
+                                                       @Param("endTime") LocalDateTime endTime,
+                                                       @Param("tenantId") Long tenantId);
+
+    @Select({
+            "<script>",
+            "select date_format(h.bill_time, '%Y-%m') as periodLabel,",
+            "       coalesce(sum(h.change_amount), 0) as amount,",
+            "       count(1) as recordCount",
+            "from jsh_account_head h",
+            "where h.delete_flag = '0'",
+            "  and h.tenant_id = #{tenantId}",
+            "  and h.type in",
+            "  <foreach collection='types' item='type' open='(' separator=',' close=')'>",
+            "    #{type}",
+            "  </foreach>",
+            "  and (#{startTime} is null or h.bill_time &gt;= #{startTime})",
+            "  and (#{endTime} is null or h.bill_time &lt;= #{endTime})",
+            "group by date_format(h.bill_time, '%Y-%m')",
+            "order by min(h.bill_time)",
+            "</script>"
+    })
+    List<TrendSeriesPoint> getFinanceTrendSeriesByMonth(@Param("types") List<String> types,
+                                                        @Param("startTime") LocalDateTime startTime,
+                                                        @Param("endTime") LocalDateTime endTime,
+                                                        @Param("tenantId") Long tenantId);
+
+    @Select("""
+            select date_format(h.oper_time, '%Y-%m-%d') as periodLabel,
+                   coalesce(sum(i.oper_number), 0) as amount,
+                   count(1) as recordCount
+            from jsh_depot_item i
+            join jsh_depot_head h on i.header_id = h.id
+            where i.delete_flag = '0'
+              and h.delete_flag = '0'
+              and h.tenant_id = #{tenantId}
+              and i.material_id = #{materialId}
+              and h.sub_type in ('销售', '零售')
+              and (#{startTime} is null or h.oper_time >= #{startTime})
+              and (#{endTime} is null or h.oper_time <= #{endTime})
+            group by date_format(h.oper_time, '%Y-%m-%d')
+            order by min(h.oper_time)
+            """)
+    List<TrendSeriesPoint> getMaterialDemandSeriesByDay(@Param("materialId") Long materialId,
+                                                        @Param("startTime") LocalDateTime startTime,
+                                                        @Param("endTime") LocalDateTime endTime,
+                                                        @Param("tenantId") Long tenantId);
+
+    @Select("""
+            select date_format(date_sub(h.oper_time, interval weekday(h.oper_time) day), '%Y-%m-%d') as periodLabel,
+                   coalesce(sum(i.oper_number), 0) as amount,
+                   count(1) as recordCount
+            from jsh_depot_item i
+            join jsh_depot_head h on i.header_id = h.id
+            where i.delete_flag = '0'
+              and h.delete_flag = '0'
+              and h.tenant_id = #{tenantId}
+              and i.material_id = #{materialId}
+              and h.sub_type in ('销售', '零售')
+              and (#{startTime} is null or h.oper_time >= #{startTime})
+              and (#{endTime} is null or h.oper_time <= #{endTime})
+            group by date_format(date_sub(h.oper_time, interval weekday(h.oper_time) day), '%Y-%m-%d')
+            order by min(h.oper_time)
+            """)
+    List<TrendSeriesPoint> getMaterialDemandSeriesByWeek(@Param("materialId") Long materialId,
+                                                         @Param("startTime") LocalDateTime startTime,
+                                                         @Param("endTime") LocalDateTime endTime,
+                                                         @Param("tenantId") Long tenantId);
+
+    @Select("""
+            select date_format(h.oper_time, '%Y-%m') as periodLabel,
+                   coalesce(sum(i.oper_number), 0) as amount,
+                   count(1) as recordCount
+            from jsh_depot_item i
+            join jsh_depot_head h on i.header_id = h.id
+            where i.delete_flag = '0'
+              and h.delete_flag = '0'
+              and h.tenant_id = #{tenantId}
+              and i.material_id = #{materialId}
+              and h.sub_type in ('销售', '零售')
+              and (#{startTime} is null or h.oper_time >= #{startTime})
+              and (#{endTime} is null or h.oper_time <= #{endTime})
+            group by date_format(h.oper_time, '%Y-%m')
+            order by min(h.oper_time)
+            """)
+    List<TrendSeriesPoint> getMaterialDemandSeriesByMonth(@Param("materialId") Long materialId,
+                                                          @Param("startTime") LocalDateTime startTime,
+                                                          @Param("endTime") LocalDateTime endTime,
+                                                          @Param("tenantId") Long tenantId);
 }

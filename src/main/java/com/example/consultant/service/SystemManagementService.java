@@ -12,6 +12,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * 系统管理服务。
+ * <p>
+ * 负责用户、角色、机构、账户、仓库、消息、日志和基础资料等系统管理能力，
+ * 是 `systemManagementTool` 的核心实现层。
+ * </p>
+ */
 @Service
 public class SystemManagementService {
 

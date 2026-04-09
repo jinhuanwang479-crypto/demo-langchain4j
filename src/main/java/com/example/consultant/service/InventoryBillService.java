@@ -16,6 +16,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/**
+ * 业务单据服务。
+ * <p>
+ * 负责采销存相关单据的查询、详情组装、创建与状态流转，
+ * 是 `inventoryBillTool` 的业务实现核心。
+ * </p>
+ */
 @Service
 public class InventoryBillService {
 
@@ -35,12 +42,18 @@ public class InventoryBillService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * 查询业务单据列表。
+     */
     public List<BillSummaryResult> listBills(String subType, String status, String keyword,
                                              String startDate, String endDate, Long tenantId, Integer limit) {
         return inventoryBillMapper.listBills(normalized(subType), normalized(status), normalized(keyword),
                 parseQueryDateTime(startDate, false), parseQueryDateTime(endDate, true), tenantId(tenantId), limit(limit));
     }
 
+    /**
+     * 查询业务单据详情及其明细。
+     */
     public BillDetailResult getBillDetail(String number, Long tenantId) {
         BillDetailResult detail = inventoryBillMapper.getBillHeadByNumber(number, tenantId(tenantId));
         if (detail != null) {
@@ -49,6 +62,9 @@ public class InventoryBillService {
         return detail;
     }
 
+    /**
+     * 创建业务单据。
+     */
     public ToolActionResult createBill(String type, String subType, Long partnerId, Long accountId,
                                        String operTime, String payType, Long creator, String itemsJson,
                                        BigDecimal changeAmount, BigDecimal discountMoney, BigDecimal otherMoney,
@@ -122,6 +138,9 @@ public class InventoryBillService {
         return new ToolActionResult("创建单据", "单据创建成功", param.getId(), number);
     }
 
+    /**
+     * 更新业务单据状态。
+     */
     public ToolActionResult updateBillStatus(String number, String status, Long tenantId) {
         int rows = inventoryBillMapper.updateBillStatus(number, status, tenantId(tenantId));
         return new ToolActionResult("更新单据状态", rows > 0 ? "单据状态更新成功" : "未找到单据", null, number);

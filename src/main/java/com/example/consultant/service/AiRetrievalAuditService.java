@@ -8,13 +8,13 @@ import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-@Service
 /**
  * 检索审计缓存服务。
  * 有些链路下，检索发生的时机和主请求完成回调的时机并不完全同步，
  * 因此额外保留一份“memoryId + queryText -> 检索结论”的短期缓存，
  * 用于在最终收尾时补录 retrievedCount / topScore / rejectionReason。
  */
+@Service
 public class AiRetrievalAuditService {
 
     private final ConcurrentMap<String, RetrievalAuditRecord> records = new ConcurrentHashMap<>();

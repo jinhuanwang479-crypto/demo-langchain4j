@@ -16,6 +16,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/**
+ * 报表服务。
+ * <p>
+ * 负责经营汇总、销售统计、采购统计、资金统计和库存预警等报表能力，
+ * 为 `reportTool` 提供标准化的聚合结果。
+ * </p>
+ */
 @Service
 public class ReportService {
 
@@ -30,6 +37,9 @@ public class ReportService {
         this.reportMapper = reportMapper;
     }
 
+    /**
+     * 查询经营汇总看板。
+     */
     public DashboardSummaryResult getDashboardSummary(String startDate, String endDate, Long tenantId) {
         DashboardSummaryResult result = new DashboardSummaryResult();
         result.setStartDate(startDate);
@@ -40,18 +50,30 @@ public class ReportService {
         return result;
     }
 
+    /**
+     * 查询销售统计。
+     */
     public List<MaterialStatisticResult> getSaleStatistics(String startDate, String endDate, Long tenantId, Integer limit) {
         return reportMapper.getSaleStatistics(parseDateTime(startDate, false), parseDateTime(endDate, true), tenantId(tenantId), limit(limit));
     }
 
+    /**
+     * 查询采购统计。
+     */
     public List<MaterialStatisticResult> getPurchaseStatistics(String startDate, String endDate, Long tenantId, Integer limit) {
         return reportMapper.getPurchaseStatistics(parseDateTime(startDate, false), parseDateTime(endDate, true), tenantId(tenantId), limit(limit));
     }
 
+    /**
+     * 查询资金统计。
+     */
     public List<DashboardFinanceSummary> getAccountStatistics(String startDate, String endDate, Long tenantId) {
         return reportMapper.getAccountStatistics(parseDateTime(startDate, false), parseDateTime(endDate, true), tenantId(tenantId));
     }
 
+    /**
+     * 查询库存预警。
+     */
     public List<StockWarningResult> getStockWarning(Long tenantId, Integer limit) {
         return reportMapper.getStockWarning(tenantId(tenantId), limit(limit));
     }

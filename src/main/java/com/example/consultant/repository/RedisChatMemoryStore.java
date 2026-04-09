@@ -30,22 +30,35 @@ public class RedisChatMemoryStore implements ChatMemoryStore {
 
     @Override
     public List<ChatMessage> getMessages(Object memoryId) {
-        String json = redisTemplate.opsForValue().get(buildKey(memoryId));
-        if (!StringUtils.hasText(json)) {
+        try {
+            String json = redisTemplate.opsForValue().get(buildKey(memoryId));
+            if (!StringUtils.hasText(json)) {
+                return List.of();
+            }
+            return ChatMessageDeserializer.messagesFromJson(json);
+        } catch (RuntimeException ex) {
+            log.warn("读取 Redis 会话记忆失败，返回空上下文: {}", ex.getMessage());
             return List.of();
         }
-        return ChatMessageDeserializer.messagesFromJson(json);
     }
 
     @Override
     public void updateMessages(Object memoryId, List<ChatMessage> list) {
-        String json = ChatMessageSerializer.messagesToJson(list);
-        redisTemplate.opsForValue().set(buildKey(memoryId), json, aiMemoryProperties.getTtlSeconds(), TimeUnit.SECONDS);
+        try {
+            String json = ChatMessageSerializer.messagesToJson(list);
+            redisTemplate.opsForValue().set(buildKey(memoryId), json, aiMemoryProperties.getTtlSeconds(), TimeUnit.SECONDS);
+        } catch (RuntimeException ex) {
+            log.warn("写入 Redis 会话记忆失败，本次对话不会持久化: {}", ex.getMessage());
+        }
     }
 
     @Override
     public void deleteMessages(Object memoryId) {
-        redisTemplate.delete(buildKey(memoryId));
+        try {
+            redisTemplate.delete(buildKey(memoryId));
+        } catch (RuntimeException ex) {
+            log.warn("删除 Redis 会话记忆失败: {}", ex.getMessage());
+        }
     }
 
     String buildKey(Object memoryId) {

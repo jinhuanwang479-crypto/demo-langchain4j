@@ -19,6 +19,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/**
+ * 财务单据服务。
+ * <p>
+ * 负责财务单据的查询、详情组装、创建和状态更新，
+ * 同时处理财务明细解析、金额汇总、业务编号生成和租户隔离。
+ * </p>
+ */
 @Service
 public class FinanceService {
 
@@ -40,12 +47,18 @@ public class FinanceService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * 查询财务单据列表。
+     */
     public List<FinanceSummaryResult> listFinanceRecords(String type, String status, String keyword,
                                                          String startDate, String endDate, Long tenantId, Integer limit) {
         return financeMapper.listFinanceRecords(normalized(type), normalized(status), normalized(keyword),
                 parseQueryDateTime(startDate, false), parseQueryDateTime(endDate, true), tenantId(tenantId), limit(limit));
     }
 
+    /**
+     * 查询财务单据详情及其明细。
+     */
     public FinanceRecordDetailResult getFinanceRecordDetail(String billNo, Long tenantId) {
         Long resolvedTenantId = tenantId(tenantId);
         log.info("查询财务单据详情: billNo={}, explicitTenantId={}, contextTenantId={}, resolvedTenantId={}",
@@ -57,6 +70,9 @@ public class FinanceService {
         return detail;
     }
 
+    /**
+     * 创建财务单据。
+     */
     public ToolActionResult createFinanceRecord(String type, Long partnerId, Long accountId,
                                                 Long handsPersonId, String billTime, String itemsJson,
                                                 BigDecimal changeAmount, BigDecimal discountMoney,
@@ -113,6 +129,9 @@ public class FinanceService {
         return new ToolActionResult("创建财务单据", "财务单据创建成功", param.getId(), billNo);
     }
 
+    /**
+     * 更新财务单据状态。
+     */
     public ToolActionResult updateFinanceStatus(String billNo, String status, Long tenantId) {
         int rows = financeMapper.updateFinanceStatus(billNo, status, tenantId(tenantId));
         return new ToolActionResult("更新财务单据状态", rows > 0 ? "财务单据状态更新成功" : "未找到财务单", null, billNo);

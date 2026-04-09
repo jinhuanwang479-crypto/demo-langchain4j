@@ -2,6 +2,8 @@ package com.example.consultant.pojo;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class ErpUser {
     private Long id;
@@ -14,4 +16,8 @@ public class ErpUser {
     private Integer status;
     private String description;
     private String remark;
+    private Long tenantId;
+    private String roleIdsRaw;
+    private Set<Long> roleIds;
+    private Set<Long> toolIds;
 }

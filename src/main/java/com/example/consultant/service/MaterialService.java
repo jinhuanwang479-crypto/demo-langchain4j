@@ -16,6 +16,13 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * 商品资料服务。
+ * <p>
+ * 负责商品分类、商品属性、商品基础资料、价格和库存等能力，
+ * 是 `materialTool` 的核心业务实现层。
+ * </p>
+ */
 @Service
 public class MaterialService {
 
@@ -33,27 +40,45 @@ public class MaterialService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * 查询商品分类。
+     */
     public List<MaterialCategory> listMaterialCategories(String keyword, Long tenantId) {
         return materialMapper.listMaterialCategories(normalized(keyword), tenantId(tenantId));
     }
 
+    /**
+     * 查询商品属性。
+     */
     public List<MaterialAttribute> listMaterialAttributes(String keyword, Long tenantId) {
         return materialMapper.listMaterialAttributes(normalized(keyword), tenantId(tenantId));
     }
 
+    /**
+     * 查询商品扩展属性。
+     */
     public List<MaterialProperty> listMaterialProperties(String keyword, Long tenantId) {
         return materialMapper.listMaterialProperties(normalized(keyword), tenantId(tenantId));
     }
 
+    /**
+     * 查询商品列表。
+     */
     public List<MaterialInfo> searchMaterials(String keyword, Long categoryId, Long tenantId, Integer limit) {
         return materialMapper.searchMaterials(normalized(keyword), categoryId, tenantId(tenantId), limit(limit));
     }
 
+    /**
+     * 查询当前租户下的商品清单。
+     */
     public List<MaterialInfo> listCurrentMaterials(Long tenantId, Integer limit) {
         // 用户直接问“目前有哪些商品”时，不需要关键字，直接返回当前租户下的商品列表。
         return materialMapper.searchMaterials(null, null, tenantId(tenantId), limit(limit));
     }
 
+    /**
+     * 查询商品详情。
+     */
     public MaterialDetailResult getMaterialDetail(Long materialId, Long tenantId) {
         MaterialDetailResult result = new MaterialDetailResult();
         result.setMaterial(materialMapper.getMaterialById(materialId, tenantId(tenantId)));
@@ -62,6 +87,9 @@ public class MaterialService {
         return result;
     }
 
+    /**
+     * 创建商品基础资料。
+     */
     public ToolActionResult createMaterial(String name, Long categoryId, String unit, Long unitId,
                                            String model, String standard, String brand, String mnemonic,
                                            String remark, Long tenantId) {
@@ -91,6 +119,9 @@ public class MaterialService {
         return new ToolActionResult("创建商品", "商品创建成功", param.getId(), null);
     }
 
+    /**
+     * 保存商品元数据，如分类、属性或扩展属性。
+     */
     public ToolActionResult saveMaterialMeta(String entityType, String dataJson, Long tenantId) {
         String type = normalizeMetaType(entityType);
         return switch (type) {
@@ -101,6 +132,9 @@ public class MaterialService {
         };
     }
 
+    /**
+     * 更新商品默认价格。
+     */
     public ToolActionResult updateMaterialPrice(Long materialId, BigDecimal purchasePrice, BigDecimal retailPrice,
                                                 BigDecimal salePrice, String barCode, String unitName, Long tenantId) {
         Long resolvedTenantId = tenantId(tenantId);
@@ -134,10 +168,16 @@ public class MaterialService {
         return new ToolActionResult("更新商品价格", "商品价格更新成功", priceId, null);
     }
 
+    /**
+     * 查询商品库存。
+     */
     public List<MaterialStockResult> getMaterialStock(String keyword, Long depotId, Long tenantId, Integer limit) {
         return materialMapper.listMaterialStocks(normalized(keyword), depotId, tenantId(tenantId), limit(limit));
     }
 
+    /**
+     * 调整商品当前库存。
+     */
     public void changeCurrentStock(Long materialId, Long depotId, BigDecimal delta, BigDecimal unitPrice, Long tenantId) {
         if (materialId == null || depotId == null || delta == null) {
             return;

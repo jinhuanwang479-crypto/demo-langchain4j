@@ -1,7 +1,9 @@
 package com.example.consultant.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -24,5 +26,12 @@ public class TenantConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tenantRequestInterceptor).addPathPatterns("/**");
+    }
+
+    @Bean
+    public RequestContextFilter requestContextFilter() {
+        RequestContextFilter filter = new RequestContextFilter();
+        filter.setThreadContextInheritable(true);
+        return filter;
     }
 }

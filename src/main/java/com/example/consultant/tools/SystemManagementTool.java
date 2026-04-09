@@ -1,6 +1,20 @@
 package com.example.consultant.tools;
 
-import com.example.consultant.pojo.*;
+import com.example.consultant.pojo.ErpAccount;
+import com.example.consultant.pojo.ErpDepot;
+import com.example.consultant.pojo.ErpFunction;
+import com.example.consultant.pojo.ErpInOutItem;
+import com.example.consultant.pojo.ErpLogRecord;
+import com.example.consultant.pojo.ErpMessageNotice;
+import com.example.consultant.pojo.ErpOrganization;
+import com.example.consultant.pojo.ErpPartner;
+import com.example.consultant.pojo.ErpPerson;
+import com.example.consultant.pojo.ErpPlatformConfig;
+import com.example.consultant.pojo.ErpRole;
+import com.example.consultant.pojo.ErpSystemConfig;
+import com.example.consultant.pojo.ErpUnit;
+import com.example.consultant.pojo.ErpUser;
+import com.example.consultant.pojo.ToolActionResult;
 import com.example.consultant.service.SystemManagementService;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;

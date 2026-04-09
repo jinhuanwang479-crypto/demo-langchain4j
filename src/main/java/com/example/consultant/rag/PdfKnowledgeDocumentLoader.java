@@ -26,6 +26,12 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
+/**
+ * PDF 知识文档加载器。
+ * <p>
+ * 负责从 PDF 中抽取文本、按需触发 OCR、清洗页内容并切分为适合向量检索的文本片段。
+ * </p>
+ */
 @Component
 public class PdfKnowledgeDocumentLoader {
 
@@ -41,10 +47,16 @@ public class PdfKnowledgeDocumentLoader {
         this.aiRagProperties = aiRagProperties;
     }
 
+    /**
+     * 判断指定文件名是否由当前加载器处理。
+     */
     public boolean supports(String filename) {
         return filename != null && filename.toLowerCase(Locale.ROOT).endsWith(".pdf");
     }
 
+    /**
+     * 加载 PDF 并输出可入库的文本分片列表。
+     */
     public List<TextSegment> load(byte[] pdfBytes, String docId, String docName, String docSha256) {
         List<TextSegment> segments = new ArrayList<>();
         DocumentSplitter splitter = DocumentSplitters.recursive(

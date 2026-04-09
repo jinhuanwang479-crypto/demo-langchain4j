@@ -1,0 +1,16 @@
+{
+  "name": "ai-interview-deck",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Editable PPTX deck generated from dev/代码详情.md with PptxGenJS",
+  "scripts": {
+    "build": "node build-deck.js"
+  },
+  "dependencies": {
+    "fontkit": "^2.0.4",
+    "linebreak": "^1.1.0",
+    "pptxgenjs": "^3.12.0",
+    "prismjs": "^1.30.0",
+    "skia-canvas": "^2.0.2"
+  }
+}

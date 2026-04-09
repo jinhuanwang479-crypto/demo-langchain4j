@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="file:///C:/Users/WJH/Desktop/">
+<title>王锦环简历 - Java后端实习生</title>
+<style>
+
+        :root {
+            --page-bg: #eef3f8;
+            --paper: #ffffff;
+            --paper-edge: #d8e3ef;
+            --ink: #1f2d3d;
+            --muted: #61758a;
+            --accent: #1f4f82;
+            --accent-soft: #edf4fb;
+            --line: #dbe4ee;
+            --badge-bg: #f3f7fb;
+            --shadow: 0 18px 45px rgba(30, 56, 91, 0.12);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        @page {
+            size: A4;
+            margin: 12mm;
+        }
+        body {
+            margin: 0;
+            padding: 28px;
+            background:
+                radial-gradient(circle at top left, rgba(31, 79, 130, 0.1), transparent 28%),
+                linear-gradient(180deg, #f5f8fc 0%, var(--page-bg) 100%);
+            color: var(--ink);
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
+            font-size: 11.5px;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+        .resume-container {
+            max-width: 880px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            padding: 30px 34px 24px;
+            border: 1px solid var(--paper-edge);
+            border-radius: 22px;
+            box-shadow: var(--shadow);
+        }
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 24px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--line);
+        }
+        .intro-area {
+            flex: 1;
+            min-width: 0;
+        }
+        .intro-area h1 {
+            margin: 0 0 8px;
+            font-size: 31px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: 1px;
+            color: #183b63;
+        }
+        .intro-area p {
+            margin: 5px 0;
+            font-size: 12px;
+            color: var(--muted);
+        }
+        .contact-line {
+            color: var(--ink) !important;
+            font-size: 12.5px !important;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        .meta-line {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent) !important;
+            font-weight: 600;
+        }
+        .availability {
+            margin-top: 10px !important;
+            color: var(--ink) !important;
+        }
+        .photo-area {
+            width: 112px;
+            flex-shrink: 0;
+        }
+        .photo-area img,
+        .photo-placeholder {
+            width: 112px;
+            height: 136px;
+            border-radius: 18px;
+            border: 1px solid #d6e0eb;
+            box-shadow: 0 10px 24px rgba(31, 79, 130, 0.12);
+        }
+        .photo-area img {
+            object-fit: cover;
+            background: #f7fafc;
+        }
+        .photo-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                linear-gradient(145deg, rgba(31, 79, 130, 0.08), rgba(31, 79, 130, 0.02)),
+                #f8fbfe;
+            color: #6f8194;
+            font-size: 11px;
+            font-weight: 600;
+            border-style: dashed;
+            letter-spacing: 0.5px;
+        }
+        h3 {
+            margin: 18px 0 6px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #183b63;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            margin: 0 0 12px;
+            background: linear-gradient(90deg, rgba(31, 79, 130, 0.8), rgba(31, 79, 130, 0.12));
+        }
+        .edu-header, .project-header, .work-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            margin-top: 10px;
+        }
+        .edu-title, .project-title, .work-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+        .edu-date, .work-date {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .sub-text {
+            margin-bottom: 8px;
+            color: var(--muted);
+        }
+        p {
+            margin: 7px 0;
+        }
+        ul {
+            margin: 7px 0 10px;
+            padding-left: 18px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        li::marker {
+            color: var(--accent);
+        }
+        strong {
+            color: var(--ink);
+        }
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 4px;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--badge-bg);
+            border: 1px solid #dce7f2;
+            color: var(--accent);
+            font-size: 10.5px;
+            font-weight: 600;
+        }
+        .section-block {
+            margin-bottom: 5px;
+        }
+        .company-name {
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .footer-note {
+            margin-top: 20px;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+            font-size: 10px;
+            color: #7b8c9d;
+            text-align: center;
+            letter-spacing: 0.4px;
+        }
+        @media (max-width: 720px) {
+            body {
+                padding: 14px;
+            }
+            .resume-container {
+                padding: 22px 18px 18px;
+                border-radius: 18px;
+            }
+            .header-flex {
+                flex-direction: column-reverse;
+                align-items: flex-start;
+            }
+            .photo-area {
+                width: auto;
+                align-self: flex-end;
+            }
+            .intro-area h1 {
+                font-size: 28px;
+            }
+            .meta-line {
+                line-height: 1.6;
+            }
+        }
+        @media print {
+            body {
+                padding: 0;
+                background: #ffffff;
+            }
+            .resume-container {
+                max-width: none;
+                padding: 0;
+                border: 0;
+                border-radius: 0;
+                box-shadow: none;
+                background: #ffffff;
+            }
+            .photo-area img,
+            .photo-placeholder {
+                box-shadow: none;
+            }
+        }
+    
+</style>
+</head>
+<body>
+<div class="resume-container">
+    <!-- 头部信息：姓名 + 联系 + 照片 -->
+    <div class="header-flex">
+        <div class="intro-area">
+            <h1>王锦环</h1>
+            <p class="contact-line">15383594761 · 15383594761@163.com</p>
+            <p class="meta-line">男 · 中共预备党员 · 26届本科在读 · 目标岗位：Java后端实习生</p>
+            <p class="availability">可实习六个月以上 · 一周内到岗</p>
+        </div>
+        <div class="photo-area">
+            <!-- 原始md文档中包含照片占位，按照真实简历提供模拟占位图，由于无真实图片地址，保留占位示意 -->
+            <img src="22201520王锦环.jpg" alt="证件照" class="photo-placeholder">
+        </div>
+    </div>
+<h3>教育经历</h3>
+<hr>
+<div class="edu-header">
+    <span class="edu-title">南昌航空大学 · 软件工程</span>
+    <span class="edu-date">2022年09月 – 2026年06月</span>
+</div>
+<div class="sub-text">本科 | 软件学院 | 多次获得校级二等奖学金、国家励志奖学金、三好学生称号</div>
+<div><strong>竞赛荣誉：</strong> 全国大学生软件测试大赛国赛三等奖</div>
+<div class="badge-list">
+    <span class="badge">校级二等奖学金×3</span>
+    <span class="badge">国家励志奖学金</span>
+    <span class="badge">三好学生</span>
+    <span class="badge">软件测试国赛三等奖</span>
+</div>
+<h3>专业技能</h3>
+<hr>
+<ul>
+    <li>熟练掌握JavaSE，熟悉面向对象三大特性、常用集合类、并发编程、锁机制、设计模式等；</li>
+    <li>熟练掌握Spring、SpringMVC、MyBatis、SpringBoot等主流框架，了解IOC、AOP原理；</li>
+    <li>熟练使用MySQL，熟悉索引优化、锁机制、事务隔离级别、MVCC、日志体系；</li>
+    <li>熟悉Redis常用数据类型、持久化方式、缓存一致性、穿透/击穿/雪崩解决方案、淘汰策略；</li>
+    <li>熟悉常用数据结构与算法（数组、链表、二叉树、排序、动态规划、回溯等）；</li>
+    <li>了解JVM内存模型、垃圾回收机制、类加载机制、引用类型；</li>
+    <li>了解分布式系统架构，SpringCloud生态（Nacos注册中心/配置中心、Gateway网关等）。</li>	
+</ul>
+
+
+<!-- 工作经历 -->
+
+<h3>工作经历</h3>
+<hr>
+<div class="work-header">
+    <span class="work-title">恒生电子 · 后端开发实习生</span>
+    <span class="work-date">2025年05月 – 2025年07月</span>
+</div>
+<div class="sub-text">运营研发管理部门 | 杭州</div>
+<p><strong>项目：HUNDSUN XBRL信息披露系统 (XBRL6.0)</strong><br>
+金融监管合规报送平台，基于JRES3.0微服务架构，支持多数据源集成、智能校验、自动化报送，提升报送效率。</p>
+<div><strong>技术栈：</strong> SpringBoot、Redisson、Jrescloud、Redis、MySQL、Oracle</div>
+<ul>
+    <li><strong>XBRL6-提放工具：</strong> 基于Redisson分布式锁实现XBRL报告及基金经理数据迁移工具，支持XBRL3到XBRL6的高效迁移、批量处理、多目标数据源及冗余数据清理。</li>
+    <li><strong>XBRL6-校验服务：</strong> 自定义线程池实现高并发XBRL报告异步校验，结合动态规则加载与FutureTask状态跟踪，保障校验可靠性与高效性。</li>
+    <li><strong>XBRL6-前置检查：</strong> 基于动态SQL构建债券交易流水等7项数据完整性检查，返回前端SQL校验结果、定时任务比对，保证报告数据准确性并优化检查结果展示。</li>
+    <li><strong>XBRL6-报告服务：</strong> 开发文档预览快速定位功能，解析HTML结构插入锚点ID，实现长文档精准跳转章节，提升用户浏览效率。</li>
+</ul>
+
+<!-- 项目经历：昌航Agent智能助手 -->
+<h3>项目经历</h3>
+<hr>
+<div class="edu-header">
+    <span class="project-title">昌航Agent智能助手</span>
+    <span class="edu-date">2024年09月 – 2025年05月</span>
+</div>
+<div class="sub-text">后端开发 | 基于SpringAI重构的教务智能服务平台，集成RAG、MCP与Agent技术</div>
+<div><strong>技术栈：</strong> SpringBoot、LangChain4j、SpringAI、MyBatis、MySQL、Redis、Redisearch、RAG、MCP、Flux</div>
+<ul>
+    <li>负责后台管理系统活动管理、反馈管理及生活管理模块，使用Redis实现高并发读优化；</li>
+    <li>基于Redisearch作为向量数据库 + nomic-embed-text向量模型构建RAG智能知识库，实现多源文档向量化存储与混合检索，构建知识采集-存储-检索闭环；</li>
+    <li>基于CAS统一认证体系实现多业务系统无缝跳转，依托AI智能体Tools工具链获取用户认证信息，支持跨系统成绩查询等个性化服务；</li>
+    <li>基于MCP协议的任务自动化系统：通过智能Agent实现请假审批发起自动同步至微信公众号；</li>
+    <li>基于Flux框架开发流式会话接口，结合Advisor策略与ChatMemory组件实现对话上下文关联与历史回溯，提升交互连贯性。</li>
+</ul>
+
+<!-- 项目：小宇宙分享平台 -->
+<div class="edu-header">
+    <span class="project-title">小宇宙分享平台</span>
+    <span class="edu-date">2024年12月 – 2025年03月</span>
+</div>
+<div class="sub-text">兴趣分享社交平台（类小红书） | 负责核心模块设计与实现</div>
+<div><strong>技术栈：</strong> SpringBoot、SpringCloud Alibaba、RocketMQ、Redis、Swagger、MyBatis、Docker、MySQL、OSS、Minio、SaToken、XXL-Job</div>
+<ul>
+    <li><strong>基础设施模块：</strong> 设计RBAC权限模型，结合SaToken实现认证鉴权；</li>
+    <li><strong>对象存储模块：</strong> 工厂模式+策略模式支持阿里云OSS与Minio动态扩展，通过Nacos实现文件策略Bean动态注册；</li>
+    <li><strong>用户笔记模块：</strong> 使用RocketMQ广播机制保证集群环境下笔记内容修改时本地缓存、Redis与MySQL的一致性，解决查询笔记详情的缓存雪崩/穿透/击穿；</li>
+    <li><strong>互动模块：</strong> Redis ZSET + RocketMQ顺序消息处理关注/取关的高并发写入与顺序性，Lua脚本保证原子性；采用RoaringBitmap高效判断点赞收藏，RateLimiter令牌桶实现流量削峰；</li>
+    <li><strong>计数与数据对齐服务：</strong> BufferTrigger聚合计数流量（1000条/批），先写Redis再MQ异步落库，XXL-Job分片广播实现计数补偿；</li>
+    <li><strong>会员服务模块：</strong> Redis+Lua分布式锁实现一人一券，定时发放优惠券提升用户转化率。</li>
+</ul>
+
+<!-- 个人总结 & 额外亮点 -->
+<h3>个人总结 & 优势</h3>
+<hr>
+<ul>
+    <li>团队协作能力强，具备整合多资源项目经验，善于协同解决复杂问题；</li>
+    <li>积极探索并应用Cursor智能IDE、Dify平台等前沿技术工具，保持技术热情与敏锐度；</li>
+    <li>扎实的计算机基础与工程落地能力，拥有金融合规系统、AI智能助手、高并发社交平台等多场景实践经验；</li>
+</ul>
+
+
+
+
+</div>
+</body>
+</html>

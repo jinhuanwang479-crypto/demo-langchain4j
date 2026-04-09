@@ -45,6 +45,7 @@ public class ChatController {
      * 返回 SSE 文本流，前端可以边接收边渲染。
      */
     public Flux<String> chat(@RequestParam String memoryId, @RequestParam String message) {
+        //进行ai的对话：目标是加上监测功能
         return Flux.create(emitter -> aiChatObservationService.streamChat(memoryId, message, emitter),
                 FluxSink.OverflowStrategy.BUFFER);
     }

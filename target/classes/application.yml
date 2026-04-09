@@ -4,7 +4,7 @@ langchain4j:
     chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       api-key: ${API-KEY}
-      model-name: glm-4.7
+      model-name: qwen3-max-2026-01-23
 #      base-url: http://localhost:11434/v1
 #      api-key: ollama
 #      model-name: deepseek-r1:1.5b
@@ -15,8 +15,8 @@ langchain4j:
     streaming-chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       api-key: ${API-KEY}
-      model-name: glm-4.7
-#      base-url: http://localhost:11434/v1
+      model-name: qwen3-max-2026-01-23
+#      base-url: http://localhost:11434/  v1
 #      api-key: ollama
 #      model-name: qwen3:0.6b
       log-requests: false
@@ -37,6 +37,7 @@ langchain4j:
       max-segments-per-batch: 10
   community:
     redis:
+      enabled: false
       host: localhost
       port: 6379
 
@@ -70,41 +71,59 @@ mybatis:
     map-underscore-to-camel-case: true
 
 app:
+  # 租户配置
   tenant:
-    default-tenant-id: 160
+    default-tenant-id: 160  # 默认租户ID，用于多租户场景下的数据隔离
+  # AI 相关配置
   ai:
+    # 对话记忆配置
     memory:
-      max-messages: 14
-      ttl-seconds: 86400
-      key-prefix: erp:chat-memory
+      max-messages: 14        # 每个会话最多保留的消息数量（超出后按FIFO策略淘汰）
+      ttl-seconds: 86400      # 会话记忆的生存时间，单位：秒（86400秒 = 24小时）
+      key-prefix: erp:chat-memory  # Redis缓存Key前缀，用于存储对话历史
+
+    # 可观测性配置（监控、追踪、评估）
     observability:
-      enabled: true
-      trace-persistence-enabled: true
-      eval-enabled: true
-      slow-threshold-ms: 5000
-      default-summary-window-hours: 24
-      max-tool-result-preview-length: 400
-      max-response-preview-length: 12000
+      enabled: true                          # 是否启用AI可观测性功能
+      trace-persistence-enabled: true        # 是否持久化调用链路追踪数据
+      eval-enabled: true                     # 是否启用AI响应质量评估
+      slow-threshold-ms: 5000               # 慢请求阈值，单位：毫秒（超过5秒记录为慢请求）
+      default-summary-window-hours: 24      # 默认统计窗口时长，单位：小时
+      max-tool-result-preview-length: 400   # 工具调用结果预览的最大字符数
+      max-response-preview-length: 12000    # AI响应内容预览的最大字符数
+
+    # RAG（检索增强生成）配置
     rag:
-      resource-pattern: classpath*:content/*
-      index-name: erp-kb-index-v1
-      vector-prefix: "erp:kb:v1:segment:"
-      manifest-key: erp:kb:v1:manifest
+      # 知识库资源路径配置
+      resource-pattern: classpath*:content/*  # 知识库文档的加载路径（支持通配符）
+
+      # 向量索引配置
+      index-name: erp-kb-index-v1            # 向量数据库中的索引名称
+      vector-prefix: "erp:kb:v1:segment:"    # 向量存储的Key前缀（用于命名空间隔离）
+      manifest-key: erp:kb:v1:manifest       # 知识库清单的存储Key（记录已处理的文档）
+
+      # 检索参数配置
       retrieval:
-        min-score: 0.68
-        max-results: 4
-        answerable-min-score: 0.74
-        min-segment-length: 40
+        min-score: 0.68              # 检索结果的最低相似度阈值（低于此值的结果将被过滤）检索时（EmbeddingStore内部）	过滤单个匹配结果	剔除完全不相关的片段
+        max-results: 4               # 单次检索返回的最大结果数量 检索后（StrictContentRetriever）	判断整次检索是否可信	决定是否值得回答
+        answerable-min-score: 0.74   # AI判断能否回答问题的置信度阈值（高于此值才尝试回答）
+        min-segment-length: 40       # 文本片段的最小长度（字符数），过短的片段将被忽略
+
+      # 文档分块配置
       chunk:
-        page-window: 1
-        max-segment-size: 350
-        overlap: 60
+        page-window: 1               # 分块时考虑的上下文页窗口大小（将相邻页的内容纳入考虑）
+        max-segment-size: 350        # 每个文本片段的最大长度（字符数）
+        overlap: 60                  # 相邻片段之间的重叠字符数（保持上下文连贯性）
+
+      # 知识库摄入配置
       ingestion:
-        auto-sync-on-startup: true
+        auto-sync-on-startup: true   # 应用启动时是否自动同步知识库（检测并处理新增/变更的文档）
+
+      # PDF文档处理配置
       pdf:
-        ocr-enabled: false
-        ocr-language: chi_sim+eng
-        render-dpi: 200
-        min-text-length: 80
-        min-chinese-ratio: 0.15
-        max-replacement-char-ratio: 0.10
+        ocr-enabled: false                    # 是否启用OCR（光学字符识别）处理扫描版PDF
+        ocr-language: chi_sim+eng             # OCR识别的语言（简体中文+英文，'+'表示多语言组合）
+        render-dpi: 200                       # PDF渲染分辨率（DPI），影响图片转文字的清晰度
+        min-text-length: 80                   # 提取文本的最小长度阈值（字符数）
+        min-chinese-ratio: 0.15               # 中文字符最低占比（低于此值可能被判定为扫描件或图片）
+        max-replacement-char-ratio: 0.10      # 替换字符（如�）的最大允许比例（高于此值说明文本质量差）
