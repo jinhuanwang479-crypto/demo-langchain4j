@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+//数据容器
 /**
  * AI 对话观测上下文。
  *

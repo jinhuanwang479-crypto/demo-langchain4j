@@ -7,7 +7,7 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
-
+//跨组件通信
 /**
  * AI 请求观测上下文注册表。
  *

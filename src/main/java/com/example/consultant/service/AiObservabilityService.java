@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-
+//编排中心 - 调用 AiResponseEvaluationService 评估质量
+//      - 写入数据库
 /**
  * AI 观测服务
  * <p>

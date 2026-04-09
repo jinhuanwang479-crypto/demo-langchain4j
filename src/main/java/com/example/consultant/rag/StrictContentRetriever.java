@@ -29,6 +29,13 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ *   StrictContentRetriever（检索器）
+ *   检索完成后通过 Registry 找到 Context，回填检索结果
+ */
+
+
 /**
  * 严格检索器（Strict Content Retriever）。
  *
