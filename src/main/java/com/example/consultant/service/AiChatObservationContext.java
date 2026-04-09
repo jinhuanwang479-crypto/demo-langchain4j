@@ -205,14 +205,14 @@ public class AiChatObservationContext {
 
         log.info("[AI-TOOL-EXECUTED] RequestId: {}, Sequence: {}, Tool: {}, Arguments: {}, Result: {}",
                 requestId, toolTraces.size() + 1, toolName,
-                abbreviate(arguments, 200), abbreviate(result, 300));
+                abbreviateWithMarker(arguments, 200), abbreviateWithMarker(result, 1000));
 
         AiToolTrace trace = new AiToolTrace();
         trace.setRequestId(requestId);
         trace.setSequenceNo(toolTraces.size() + 1);
         trace.setToolName(toolName);
         trace.setArgumentsJson(arguments);
-        trace.setResultPreview(abbreviate(result, properties.getMaxToolResultPreviewLength()));
+        trace.setResultPreview(abbreviateWithMarker(result, properties.getMaxToolResultPreviewLength()));
         trace.setSuccess(toolExecutionLooksSuccessful(result));
         trace.setCreatedAt(LocalDateTime.now());
 
@@ -427,6 +427,14 @@ public class AiChatObservationContext {
             return value;
         }
         return value.substring(0, maxLength);
+    }
+
+    private String abbreviateWithMarker(String value, int maxLength) {
+        if (value == null || maxLength <= 0 || value.length() <= maxLength) {
+            return value;
+        }
+        int safeLength = Math.max(0, maxLength - "... [truncated]".length());
+        return value.substring(0, safeLength) + "... [truncated]";
     }
 
     /**

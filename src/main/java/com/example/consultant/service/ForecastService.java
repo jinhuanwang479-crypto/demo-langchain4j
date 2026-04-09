@@ -520,9 +520,15 @@ public class ForecastService {
     }
 
     private LocalDate resolveEndDate(String endDate, String granularity) {
+        LocalDate currentPeriodEnd = currentPeriodEnd(granularity);
         if (StringUtils.hasText(endDate)) {
-            return parseDate(endDate);
+            LocalDate parsedEnd = parseDate(endDate);
+            return parsedEnd.isAfter(currentPeriodEnd) ? currentPeriodEnd : parsedEnd;
         }
+        return currentPeriodEnd;
+    }
+
+    private LocalDate currentPeriodEnd(String granularity) {
         LocalDate now = LocalDate.now();
         return switch (granularity) {
             case "week" -> alignWeek(now);

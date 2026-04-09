@@ -23,7 +23,7 @@ public class AiObservabilityProperties {
     /** 汇总接口默认统计最近多少小时的数据。 */
     private int defaultSummaryWindowHours = 24;
     /** 工具调用结果预览的最大保留长度，避免把超长结果直接写入数据库。 */
-    private int maxToolResultPreviewLength = 400;
+    private int maxToolResultPreviewLength = 4000;
     /** AI 最终回答预览的最大保留长度，避免 trace 表无限膨胀。 */
     private int maxResponsePreviewLength = 12000;
 
