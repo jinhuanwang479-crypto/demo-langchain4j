@@ -129,6 +129,12 @@ public class ConversationService {
             convMap.put("memoryId", conv.getMemoryId());
             convMap.put("title", conv.getTitle() != null ? conv.getTitle() : "新对话");
             convMap.put("messageCount", conv.getMessageCount());
+            if (conv.getUpdateTime() != null) {
+                convMap.put("updateTime", conv.getUpdateTime().getTime());
+            }
+            if (conv.getCreateTime() != null) {
+                convMap.put("createTime", conv.getCreateTime().getTime());
+            }
             result.add(convMap);
         }
 

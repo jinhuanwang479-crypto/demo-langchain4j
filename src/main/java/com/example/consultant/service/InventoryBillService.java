@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,6 +72,10 @@ public class InventoryBillService {
                                        BigDecimal deposit, String remark, Long tenantId) {
         Long resolvedTenantId = tenantId(tenantId);
         List<BillItemRequest> items = parseItems(itemsJson);
+        ToolActionResult validationResult = validateBillItems(items);
+        if (validationResult != null) {
+            return validationResult;
+        }
         BigDecimal totalPrice = items.stream()
                 .map(this::itemAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -139,6 +144,57 @@ public class InventoryBillService {
     }
 
     /**
+     * 为单个商品创建“其它入库”单，适用于新建商品后的初始化库存录入。
+     */
+    public ToolActionResult createOtherInStockForMaterial(Long materialId, Long depotId, BigDecimal quantity,
+                                                          BigDecimal unitPrice, Long partnerId, Long accountId,
+                                                          String operTime, String payType, Long creator,
+                                                          String remark, Long tenantId) {
+        if (materialId == null) {
+            return ToolActionResult.failure("创建其它入库", "商品ID不能为空", "MATERIAL_ID_MISSING");
+        }
+        if (depotId == null) {
+            return ToolActionResult.failure("创建其它入库", "仓库ID不能为空", "DEPOT_ID_MISSING");
+        }
+        if (quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
+            return ToolActionResult.failure("创建其它入库", "入库数量必须大于 0", "QUANTITY_INVALID");
+        }
+
+        BigDecimal resolvedUnitPrice = unitPrice == null ? BigDecimal.ZERO : unitPrice;
+        BigDecimal totalPrice = resolvedUnitPrice.multiply(quantity);
+
+        List<BillItemRequest> items = new ArrayList<>();
+        BillItemRequest item = new BillItemRequest();
+        item.setMaterialId(materialId);
+        item.setDepotId(depotId);
+        item.setOperNumber(quantity);
+        item.setBasicNumber(quantity);
+        item.setUnitPrice(resolvedUnitPrice);
+        item.setPurchaseUnitPrice(resolvedUnitPrice);
+        item.setAllPrice(totalPrice);
+        item.setRemark(normalized(remark));
+        items.add(item);
+
+        try {
+            String itemsJson = objectMapper.writeValueAsString(items);
+            return createBill("入库", "其它入库", partnerId, accountId, operTime, payType, creator,
+                    itemsJson, totalPrice, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, remark, tenantId);
+        } catch (Exception e) {
+            return ToolActionResult.failure("创建其它入库", "构造其它入库明细失败: " + e.getMessage(), "OTHER_IN_STOCK_BUILD_FAILED");
+        }
+    }
+
+    /**
+     * 为单个商品快速创建其它入库单。
+     * 只保留最核心参数，降低 LLM 组装 tool arguments 时出错的概率。
+     */
+    public ToolActionResult createOtherInStockForMaterialQuick(Long materialId, Long depotId, BigDecimal quantity,
+                                                               BigDecimal unitPrice, String remark, Long tenantId) {
+        return createOtherInStockForMaterial(materialId, depotId, quantity, unitPrice,
+                null, null, null, null, null, remark, tenantId);
+    }
+
+    /**
      * 更新业务单据状态。
      */
     public ToolActionResult updateBillStatus(String number, String status, Long tenantId) {
@@ -153,6 +209,30 @@ public class InventoryBillService {
         } catch (Exception e) {
             throw new IllegalArgumentException("商品明细 JSON 格式不正确: " + e.getMessage(), e);
         }
+    }
+
+    private ToolActionResult validateBillItems(List<BillItemRequest> items) {
+        if (items == null || items.isEmpty()) {
+            return ToolActionResult.failure("创建单据", "商品明细不能为空", "EMPTY_ITEMS");
+        }
+
+        for (int i = 0; i < items.size(); i++) {
+            BillItemRequest item = items.get(i);
+            int itemNo = i + 1;
+            if (item.getMaterialId() == null) {
+                return ToolActionResult.failure("创建单据", "第" + itemNo + "条商品明细缺少 materialId", "ITEM_MATERIAL_ID_MISSING");
+            }
+            if (item.getDepotId() == null) {
+                return ToolActionResult.failure("创建单据", "第" + itemNo + "条商品明细缺少 depotId", "ITEM_DEPOT_ID_MISSING");
+            }
+            if (item.getOperNumber() == null) {
+                return ToolActionResult.failure("创建单据", "第" + itemNo + "条商品明细缺少 operNumber，AI 生成明细时请使用 operNumber 或 number 字段", "ITEM_OPER_NUMBER_MISSING");
+            }
+            if (item.getOperNumber().compareTo(BigDecimal.ZERO) <= 0) {
+                return ToolActionResult.failure("创建单据", "第" + itemNo + "条商品明细的 operNumber 必须大于 0", "ITEM_OPER_NUMBER_INVALID");
+            }
+        }
+        return null;
     }
 
     private String nextBusinessNumber(String prefix) {

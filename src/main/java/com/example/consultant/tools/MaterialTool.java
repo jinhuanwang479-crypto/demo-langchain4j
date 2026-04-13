@@ -97,4 +97,9 @@ public class MaterialTool {
                                                       @P("返回条数，可选") Integer limit) {
         return materialService.getMaterialStock(keyword, depotId, null, limit);
     }
+
+    @Tool("按商品ID查询库存，用于商品刚创建或刚入库后做精确库存校验")
+    public List<MaterialStockResult> getMaterialStockByMaterialId(@P("商品ID") Long materialId) {
+        return materialService.getMaterialStockByMaterialId(materialId, null);
+    }
 }

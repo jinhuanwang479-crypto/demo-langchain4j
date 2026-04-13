@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class AiToolDefinition {
     private Long id;
+    private Long tenantId;
     private String toolCode;
     private String toolName;
     private String beanName;
@@ -12,4 +13,6 @@ public class AiToolDefinition {
     private String functionIds;
     private Integer registeredInAi;
     private Integer enabled;
+    private Integer sort;
+    private String remark;
 }

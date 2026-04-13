@@ -4,7 +4,7 @@ langchain4j:
     chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       api-key: ${API-KEY}
-      model-name: qwen3-max-2026-01-23
+      model-name: qwen3.5-plus
 #      base-url: http://localhost:11434/v1
 #      api-key: ollama
 #      model-name: deepseek-r1:1.5b
@@ -15,7 +15,7 @@ langchain4j:
     streaming-chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       api-key: ${API-KEY}
-      model-name: qwen3-max-2026-01-23
+      model-name: qwen3.5-plus
 #      base-url: http://localhost:11434/  v1
 #      api-key: ollama
 #      model-name: qwen3:0.6b

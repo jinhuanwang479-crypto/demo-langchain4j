@@ -3,15 +3,18 @@ package com.example.consultant.service;
 import com.example.consultant.config.TenantContextHolder;
 import com.example.consultant.mapper.MaterialMapper;
 import com.example.consultant.mapper.ReportMapper;
+import com.example.consultant.pojo.ForecastReportRequest;
 import com.example.consultant.pojo.MaterialInfo;
 import com.example.consultant.pojo.TrendForecastPoint;
 import com.example.consultant.pojo.TrendForecastResult;
 import com.example.consultant.pojo.TrendSeriesPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,17 +29,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * 趋势预测服务。
- * <p>
- * 基于销售、采购、资金和商品销量等历史时间序列生成预测结果，
- * 并在结果中附带趋势解释、波动等级和经营建议。
- * </p>
- */
 @Service
 public class ForecastService {
 
+    public static final String REPORT_KIND_BUSINESS = "business";
+    public static final String REPORT_KIND_CASHFLOW = "cashflow";
+    public static final String REPORT_KIND_MATERIAL = "material";
+
     private static final Long DEFAULT_TENANT_ID = 160L;
+    private static final String REPORT_DOWNLOAD_PATH = "/new-backend-ai/forecast/report/download";
     private static final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
 
@@ -48,46 +49,135 @@ public class ForecastService {
         this.materialMapper = materialMapper;
     }
 
-    /**
-     * 预测业务趋势，如销售、采购、零售金额变化。
-     */
     public TrendForecastResult forecastBusinessTrend(String metricType, String granularity, Integer periods,
                                                      String startDate, String endDate, Long tenantId) {
-        String resolvedMetricType = normalizeBusinessMetricType(metricType);
+        return forecast(normalizeBusinessReportRequest(metricType, granularity, periods, startDate, endDate), tenantId);
+    }
+
+    public TrendForecastResult forecastCashflowTrend(String metricType, String granularity, Integer periods,
+                                                     String startDate, String endDate, Long tenantId) {
+        return forecast(normalizeCashflowReportRequest(metricType, granularity, periods, startDate, endDate), tenantId);
+    }
+
+    public TrendForecastResult forecastMaterialDemand(String materialKeyword, String granularity, Integer periods,
+                                                      String startDate, String endDate, Long tenantId) {
+        return forecast(normalizeMaterialReportRequest(materialKeyword, granularity, periods, startDate, endDate), tenantId);
+    }
+
+    public ForecastReportRequest normalizeDownloadRequest(String reportKind, String metricType, String granularity,
+                                                          Integer periods, String startDate, String endDate,
+                                                          String materialKeyword) {
+        String resolvedReportKind = normalizeReportKind(reportKind);
+        return switch (resolvedReportKind) {
+            case REPORT_KIND_BUSINESS -> {
+                if (!StringUtils.hasText(metricType)) {
+                    throw new IllegalArgumentException("business 预测下载必须提供 metricType");
+                }
+                yield normalizeBusinessReportRequest(metricType, granularity, periods, startDate, endDate);
+            }
+            case REPORT_KIND_CASHFLOW -> {
+                if (!StringUtils.hasText(metricType)) {
+                    throw new IllegalArgumentException("cashflow 预测下载必须提供 metricType");
+                }
+                yield normalizeCashflowReportRequest(metricType, granularity, periods, startDate, endDate);
+            }
+            default -> {
+                if (!StringUtils.hasText(materialKeyword)) {
+                    throw new IllegalArgumentException("material 预测下载必须提供 materialKeyword");
+                }
+                yield normalizeMaterialReportRequest(materialKeyword, granularity, periods, startDate, endDate);
+            }
+        };
+    }
+
+    public TrendForecastResult forecast(ForecastReportRequest request, Long tenantId) {
+        ForecastReportRequest normalizedRequest = normalizeRequest(request);
+        TrendForecastResult result = switch (normalizedRequest.getReportKind()) {
+            case REPORT_KIND_BUSINESS -> runBusinessForecast(normalizedRequest, tenantId);
+            case REPORT_KIND_CASHFLOW -> runCashflowForecast(normalizedRequest, tenantId);
+            default -> runMaterialForecast(normalizedRequest, tenantId);
+        };
+        attachReportMetadata(normalizedRequest, result);
+        return result;
+    }
+
+    public ForecastReportRequest normalizeBusinessReportRequest(String metricType, String granularity, Integer periods,
+                                                                String startDate, String endDate) {
+        ForecastReportRequest request = baseRequest(REPORT_KIND_BUSINESS, granularity, periods, startDate, endDate);
+        request.setMetricType(normalizeBusinessMetricType(metricType));
+        return request;
+    }
+
+    public ForecastReportRequest normalizeCashflowReportRequest(String metricType, String granularity, Integer periods,
+                                                                String startDate, String endDate) {
+        ForecastReportRequest request = baseRequest(REPORT_KIND_CASHFLOW, granularity, periods, startDate, endDate);
+        request.setMetricType(normalizeFinanceMetricType(metricType));
+        return request;
+    }
+
+    public ForecastReportRequest normalizeMaterialReportRequest(String materialKeyword, String granularity, Integer periods,
+                                                                String startDate, String endDate) {
+        ForecastReportRequest request = baseRequest(REPORT_KIND_MATERIAL, granularity, periods, startDate, endDate);
+        request.setMaterialKeyword(normalized(materialKeyword));
+        return request;
+    }
+
+    private ForecastReportRequest normalizeRequest(ForecastReportRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("预测请求不能为空");
+        }
+        return switch (normalizeReportKind(request.getReportKind())) {
+            case REPORT_KIND_BUSINESS -> normalizeBusinessReportRequest(
+                    request.getMetricType(), request.getGranularity(), request.getPeriods(), request.getStartDate(), request.getEndDate());
+            case REPORT_KIND_CASHFLOW -> normalizeCashflowReportRequest(
+                    request.getMetricType(), request.getGranularity(), request.getPeriods(), request.getStartDate(), request.getEndDate());
+            default -> normalizeMaterialReportRequest(
+                    request.getMaterialKeyword(), request.getGranularity(), request.getPeriods(), request.getStartDate(), request.getEndDate());
+        };
+    }
+
+    private ForecastReportRequest baseRequest(String reportKind, String granularity, Integer periods,
+                                              String startDate, String endDate) {
         String resolvedGranularity = normalizeGranularity(granularity);
         int forecastPeriods = normalizeForecastPeriods(periods, resolvedGranularity);
-        LocalDate start = resolveStartDate(startDate, resolvedGranularity);
-        LocalDate end = resolveEndDate(endDate, resolvedGranularity);
+        LocalDate resolvedStartDate = resolveStartDate(startDate, resolvedGranularity);
+        LocalDate resolvedEndDate = resolveEndDate(endDate, resolvedGranularity);
 
-        List<String> subTypes = switch (resolvedMetricType) {
+        ForecastReportRequest request = new ForecastReportRequest();
+        request.setReportKind(reportKind);
+        request.setGranularity(resolvedGranularity);
+        request.setPeriods(forecastPeriods);
+        request.setStartDate(resolvedStartDate.format(DAY_FORMATTER));
+        request.setEndDate(resolvedEndDate.format(DAY_FORMATTER));
+        return request;
+    }
+
+    private TrendForecastResult runBusinessForecast(ForecastReportRequest request, Long tenantId) {
+        LocalDate start = parseDate(request.getStartDate());
+        LocalDate end = parseDate(request.getEndDate());
+        List<String> subTypes = switch (request.getMetricType()) {
             case "purchase" -> List.of("采购");
             case "retail" -> List.of("零售");
             default -> List.of("销售", "零售");
         };
-
-        List<TrendSeriesPoint> rawSeries = switch (resolvedGranularity) {
+        List<TrendSeriesPoint> rawSeries = switch (request.getGranularity()) {
             case "week" -> reportMapper.getBusinessTrendSeriesByWeek(subTypes, atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
             case "month" -> reportMapper.getBusinessTrendSeriesByMonth(subTypes, atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
             default -> reportMapper.getBusinessTrendSeriesByDay(subTypes, atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
         };
-
-        TrendForecastResult result = buildForecastResult(rawSeries, resolvedMetricType, resolvedGranularity, forecastPeriods, start, end);
+        if ("purchase".equals(request.getMetricType())) {
+            rawSeries = normalizeSeriesToPositive(rawSeries);
+        }
+        TrendForecastResult result = buildForecastResult(rawSeries, request.getMetricType(), request.getGranularity(),
+                request.getPeriods(), start, end);
         result.setMethod("LinearTrend+MovingAverage");
         return result;
     }
 
-    /**
-     * 预测资金趋势，如收款、付款、支出等资金变化。
-     */
-    public TrendForecastResult forecastCashflowTrend(String metricType, String granularity, Integer periods,
-                                                     String startDate, String endDate, Long tenantId) {
-        String resolvedMetricType = normalizeFinanceMetricType(metricType);
-        String resolvedGranularity = normalizeGranularity(granularity);
-        int forecastPeriods = normalizeForecastPeriods(periods, resolvedGranularity);
-        LocalDate start = resolveStartDate(startDate, resolvedGranularity);
-        LocalDate end = resolveEndDate(endDate, resolvedGranularity);
-
-        List<String> types = switch (resolvedMetricType) {
+    private TrendForecastResult runCashflowForecast(ForecastReportRequest request, Long tenantId) {
+        LocalDate start = parseDate(request.getStartDate());
+        LocalDate end = parseDate(request.getEndDate());
+        List<String> types = switch (request.getMetricType()) {
             case "pay" -> List.of("付款");
             case "income" -> List.of("收入");
             case "expense" -> List.of("支出");
@@ -95,49 +185,43 @@ public class ForecastService {
             case "advance" -> List.of("收预付款");
             default -> List.of("收款");
         };
-
-        List<TrendSeriesPoint> rawSeries = switch (resolvedGranularity) {
+        List<TrendSeriesPoint> rawSeries = switch (request.getGranularity()) {
             case "week" -> reportMapper.getFinanceTrendSeriesByWeek(types, atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
             case "month" -> reportMapper.getFinanceTrendSeriesByMonth(types, atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
             default -> reportMapper.getFinanceTrendSeriesByDay(types, atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
         };
-
-        TrendForecastResult result = buildForecastResult(rawSeries, resolvedMetricType, resolvedGranularity, forecastPeriods, start, end);
+        TrendForecastResult result = buildForecastResult(rawSeries, request.getMetricType(), request.getGranularity(),
+                request.getPeriods(), start, end);
         result.setMethod("LinearTrend+MovingAverage");
         return result;
     }
 
-    /**
-     * 预测指定商品的销量需求趋势。
-     */
-    public TrendForecastResult forecastMaterialDemand(String materialKeyword, String granularity, Integer periods,
-                                                      String startDate, String endDate, Long tenantId) {
-        String resolvedGranularity = normalizeGranularity(granularity);
-        int forecastPeriods = normalizeForecastPeriods(periods, resolvedGranularity);
-        LocalDate start = resolveStartDate(startDate, resolvedGranularity);
-        LocalDate end = resolveEndDate(endDate, resolvedGranularity);
-
+    private TrendForecastResult runMaterialForecast(ForecastReportRequest request, Long tenantId) {
+        LocalDate start = parseDate(request.getStartDate());
+        LocalDate end = parseDate(request.getEndDate());
         TrendForecastResult result = new TrendForecastResult();
         result.setMetricType("material_demand");
-        result.setGranularity(resolvedGranularity);
-        result.setForecastPeriods(forecastPeriods);
+        result.setGranularity(request.getGranularity());
+        result.setForecastPeriods(request.getPeriods());
         result.setMethod("LinearTrend+MovingAverage");
-
-        List<MaterialInfo> materials = materialMapper.searchMaterials(normalized(materialKeyword), null, tenantId(tenantId), 1);
-        if (materials == null || materials.isEmpty()) {
-            result.setWarning("未找到匹配的商品，无法进行销量预测");
+        if (!StringUtils.hasText(request.getMaterialKeyword())) {
+            result.setWarning("未提供商品关键词，无法进行销量预测");
             result.setConfidenceLevel("LOW");
             return result;
         }
-
+        List<MaterialInfo> materials = materialMapper.searchMaterials(request.getMaterialKeyword(), null, tenantId(tenantId), 1);
+        if (materials == null || materials.isEmpty()) {
+            result.setWarning("未找到匹配商品，下载报告时将保留空数据说明");
+            result.setConfidenceLevel("LOW");
+            return result;
+        }
         MaterialInfo material = materials.get(0);
-        List<TrendSeriesPoint> rawSeries = switch (resolvedGranularity) {
+        List<TrendSeriesPoint> rawSeries = switch (request.getGranularity()) {
             case "week" -> reportMapper.getMaterialDemandSeriesByWeek(material.getId(), atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
             case "month" -> reportMapper.getMaterialDemandSeriesByMonth(material.getId(), atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
             default -> reportMapper.getMaterialDemandSeriesByDay(material.getId(), atStartOfDay(start), atEndOfDay(end), tenantId(tenantId));
         };
-
-        result = buildForecastResult(rawSeries, "material_demand", resolvedGranularity, forecastPeriods, start, end);
+        result = buildForecastResult(rawSeries, "material_demand", request.getGranularity(), request.getPeriods(), start, end);
         result.setMethod("LinearTrend+MovingAverage");
         result.setResolvedMaterialId(material.getId());
         result.setResolvedMaterialName(material.getName());
@@ -150,29 +234,24 @@ public class ForecastService {
         result.setMetricType(metricType);
         result.setGranularity(granularity);
         result.setForecastPeriods(forecastPeriods);
-
         List<TrendForecastPoint> historyPoints = fillMissingSeries(rawSeries, granularity, start, end);
         result.setHistoryPoints(historyPoints);
         result.setHistoricalPeriods(historyPoints.size());
-
         if (historyPoints.isEmpty()) {
             result.setWarning("当前历史数据为空，无法进行趋势预测");
             result.setConfidenceLevel("LOW");
             applyBusinessInterpretation(result);
             return result;
         }
-
         BigDecimal recentAverage = average(historyPoints);
         result.setRecentAverage(recentAverage);
-
         if (historyPoints.size() < 7) {
-            result.setWarning("历史数据点少于7个，当前无法可靠预测");
+            result.setWarning("历史数据点少于 7 个，当前结果仅供参考");
             result.setConfidenceLevel("LOW");
             result.setTrendSlope(BigDecimal.ZERO);
             applyBusinessInterpretation(result);
             return result;
         }
-
         double slope = linearRegressionSlope(historyPoints);
         result.setTrendSlope(scale(BigDecimal.valueOf(slope)));
         result.setConfidenceLevel(resolveConfidence(historyPoints.size()));
@@ -188,7 +267,6 @@ public class ForecastService {
                 valueMap.put(point.getPeriodLabel(), point.getAmount() == null ? BigDecimal.ZERO : point.getAmount());
             }
         }
-
         List<TrendForecastPoint> points = new ArrayList<>();
         switch (granularity) {
             case "week" -> {
@@ -226,7 +304,6 @@ public class ForecastService {
         List<TrendForecastPoint> forecastPoints = new ArrayList<>();
         BigDecimal lastValue = historyPoints.get(historyPoints.size() - 1).getValue();
         String lastLabel = historyPoints.get(historyPoints.size() - 1).getPeriodLabel();
-
         for (int i = 1; i <= periods; i++) {
             BigDecimal trendValue = scale(lastValue.add(BigDecimal.valueOf(slope * i)));
             BigDecimal predicted = scale(trendValue.multiply(BigDecimal.valueOf(0.6))
@@ -300,11 +377,25 @@ public class ForecastService {
         return point;
     }
 
+    private List<TrendSeriesPoint> normalizeSeriesToPositive(List<TrendSeriesPoint> rawSeries) {
+        if (rawSeries == null || rawSeries.isEmpty()) {
+            return rawSeries;
+        }
+        List<TrendSeriesPoint> normalizedSeries = new ArrayList<>(rawSeries.size());
+        for (TrendSeriesPoint rawPoint : rawSeries) {
+            TrendSeriesPoint normalizedPoint = new TrendSeriesPoint();
+            normalizedPoint.setPeriodLabel(rawPoint.getPeriodLabel());
+            normalizedPoint.setRecordCount(rawPoint.getRecordCount());
+            normalizedPoint.setAmount(rawPoint.getAmount() == null ? BigDecimal.ZERO : rawPoint.getAmount().abs());
+            normalizedSeries.add(normalizedPoint);
+        }
+        return normalizedSeries;
+    }
+
     private void applyBusinessInterpretation(TrendForecastResult result) {
         BigDecimal recentAverage = result.getRecentAverage() == null ? BigDecimal.ZERO : result.getRecentAverage();
         BigDecimal forecastAverage = average(result.getForecastPoints());
         result.setForecastAverage(forecastAverage);
-
         if (recentAverage.signum() == 0) {
             result.setPredictedChangeRate(forecastAverage.signum() == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(100));
         } else {
@@ -314,7 +405,6 @@ public class ForecastService {
                             .multiply(BigDecimal.valueOf(100))
             ));
         }
-
         result.setTrendDirection(resolveDirection(result.getPredictedChangeRate()));
         result.setVolatilityLevel(resolveVolatility(result.getHistoryPoints()));
         result.setBusinessSummary(buildBusinessSummary(result));
@@ -373,22 +463,20 @@ public class ForecastService {
         String changeRate = result.getPredictedChangeRate() == null
                 ? "0%"
                 : result.getPredictedChangeRate().stripTrailingZeros().toPlainString() + "%";
-        return targetName + "在未来" + result.getForecastPeriods() + "个" + granularityLabel(result.getGranularity())
-                + direction + "，预测均值约为" + safeAmount(result.getForecastAverage())
-                + "，相对近期均值变化约" + changeRate + "。";
+        return targetName + "在未来 " + result.getForecastPeriods() + " 个" + granularityLabel(result.getGranularity())
+                + direction + "，预测均值约为 " + safeAmount(result.getForecastAverage())
+                + "，相对近期均值变化约 " + changeRate + "。";
     }
 
     private List<String> buildBusinessSuggestions(TrendForecastResult result) {
         List<String> suggestions = new ArrayList<>();
         if (StringUtils.hasText(result.getWarning())) {
-            suggestions.add("建议先补充更多连续历史数据后再做预测分析。");
+            suggestions.add("建议先补充更多连续历史数据后再做趋势判断。");
             return suggestions;
         }
-
         String metricType = result.getMetricType();
         String direction = result.getTrendDirection();
         String volatility = result.getVolatilityLevel();
-
         if ("material_demand".equals(metricType)) {
             if ("UP".equals(direction)) {
                 suggestions.add("建议提前准备补货或锁定采购计划，避免短期缺货。");
@@ -422,9 +510,8 @@ public class ForecastService {
                 suggestions.add("建议保持当前经营节奏，同时继续跟踪核心指标。");
             }
         }
-
         if ("HIGH".equals(volatility)) {
-            suggestions.add("历史波动较大，建议结合人工判断，不要只依据单次预测结果决策。");
+            suggestions.add("历史波动较大，建议结合人工判断，不要只依赖单次预测结果决策。");
         } else if ("MEDIUM".equals(volatility)) {
             suggestions.add("建议结合最近业务活动或节假日因素一起判断趋势。");
         }
@@ -493,6 +580,18 @@ public class ForecastService {
             case "week", "weekly", "周" -> "week";
             case "month", "monthly", "月" -> "month";
             default -> "day";
+        };
+    }
+
+    private String normalizeReportKind(String reportKind) {
+        if (!StringUtils.hasText(reportKind)) {
+            throw new IllegalArgumentException("reportKind 不能为空");
+        }
+        return switch (reportKind.trim().toLowerCase(Locale.ROOT)) {
+            case REPORT_KIND_BUSINESS, "业务" -> REPORT_KIND_BUSINESS;
+            case REPORT_KIND_CASHFLOW, "finance", "资金" -> REPORT_KIND_CASHFLOW;
+            case REPORT_KIND_MATERIAL, "商品", "material_demand" -> REPORT_KIND_MATERIAL;
+            default -> throw new IllegalArgumentException("不支持的 reportKind: " + reportKind);
         };
     }
 
@@ -579,5 +678,62 @@ public class ForecastService {
 
     private BigDecimal scale(BigDecimal value) {
         return value.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private void attachReportMetadata(ForecastReportRequest request, TrendForecastResult result) {
+        result.setReportTitle(buildReportTitle(request, result));
+        result.setReportFileName(buildReportFileName(request, result));
+        result.setDownloadUrl(buildDownloadUrl(request));
+    }
+
+    private String buildReportTitle(ForecastReportRequest request, TrendForecastResult result) {
+        return switch (request.getReportKind()) {
+            case REPORT_KIND_BUSINESS -> "业务趋势预测报告";
+            case REPORT_KIND_CASHFLOW -> "资金趋势预测报告";
+            default -> StringUtils.hasText(result.getResolvedMaterialName())
+                    ? "商品销量预测报告（" + result.getResolvedMaterialName() + "）"
+                    : "商品销量预测报告";
+        };
+    }
+
+    private String buildReportFileName(ForecastReportRequest request, TrendForecastResult result) {
+        String datePart = LocalDate.now().format(DAY_FORMATTER);
+        return switch (request.getReportKind()) {
+            case REPORT_KIND_BUSINESS ->
+                    "业务趋势预测_" + request.getMetricType() + "_" + request.getGranularity() + "_" + datePart + ".xls";
+            case REPORT_KIND_CASHFLOW ->
+                    "资金趋势预测_" + request.getMetricType() + "_" + request.getGranularity() + "_" + datePart + ".xls";
+            default -> "商品销量预测_" + sanitizeFileSegment(resolveMaterialFileLabel(request, result)) + "_" + datePart + ".xls";
+        };
+    }
+
+    private String resolveMaterialFileLabel(ForecastReportRequest request, TrendForecastResult result) {
+        if (StringUtils.hasText(result.getResolvedMaterialName())) {
+            return result.getResolvedMaterialName();
+        }
+        if (StringUtils.hasText(request.getMaterialKeyword())) {
+            return request.getMaterialKeyword();
+        }
+        return "未找到匹配商品";
+    }
+
+    private String sanitizeFileSegment(String value) {
+        return value.replaceAll("[\\\\/:*?\"<>|]", "_").trim();
+    }
+
+    private String buildDownloadUrl(ForecastReportRequest request) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(REPORT_DOWNLOAD_PATH)
+                .queryParam("reportKind", request.getReportKind())
+                .queryParam("granularity", request.getGranularity())
+                .queryParam("periods", request.getPeriods())
+                .queryParam("startDate", request.getStartDate())
+                .queryParam("endDate", request.getEndDate());
+        if (StringUtils.hasText(request.getMetricType())) {
+            builder.queryParam("metricType", request.getMetricType());
+        }
+        if (StringUtils.hasText(request.getMaterialKeyword())) {
+            builder.queryParam("materialKeyword", request.getMaterialKeyword());
+        }
+        return builder.build().encode(StandardCharsets.UTF_8).toUriString();
     }
 }

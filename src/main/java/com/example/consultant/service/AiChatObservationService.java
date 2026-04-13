@@ -64,6 +64,7 @@ public class AiChatObservationService {
     private final AiObservabilityService aiObservabilityService; // 可观测性服务（持久化、评估）
     private final AiObservationRegistry aiObservationRegistry;   // 观测上下文注册中心
     private final AiRetrievalAuditService aiRetrievalAuditService; // 检索审计服务（缓存检索结果）
+    private final AiToolGuidanceService aiToolGuidanceService;   // 动态工具提示词服务
     private final AiObservabilityProperties observabilityProperties; // 可观测性配置
     private final MeterRegistry meterRegistry;                   // Micrometer 指标注册器
 
@@ -81,12 +82,14 @@ public class AiChatObservationService {
                                     AiObservabilityService aiObservabilityService,
                                     AiObservationRegistry aiObservationRegistry,
                                     AiRetrievalAuditService aiRetrievalAuditService,
+                                    AiToolGuidanceService aiToolGuidanceService,
                                     AiObservabilityProperties observabilityProperties,
                                     MeterRegistry meterRegistry) {
         this.consultantService = consultantService;
         this.aiObservabilityService = aiObservabilityService;
         this.aiObservationRegistry = aiObservationRegistry;
         this.aiRetrievalAuditService = aiRetrievalAuditService;
+        this.aiToolGuidanceService = aiToolGuidanceService;
         this.observabilityProperties = observabilityProperties;
         this.meterRegistry = meterRegistry;
     }
@@ -131,7 +134,8 @@ public class AiChatObservationService {
                 context.getRequestId(), memoryId, context.getTenantId(), context.getUserId());
 
         try {
-            consultantService.chat(memoryId, message)
+            String availableToolGuidance = aiToolGuidanceService.buildAvailableToolGuidance();
+            consultantService.chat(memoryId, availableToolGuidance, message)
                     .onPartialResponse(partial -> {
                         // 记录响应片段并推送给客户端
                         context.onPartialResponse(partial);

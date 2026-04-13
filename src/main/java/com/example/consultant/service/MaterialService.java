@@ -176,6 +176,16 @@ public class MaterialService {
     }
 
     /**
+     * 按商品ID查询库存。
+     */
+    public List<MaterialStockResult> getMaterialStockByMaterialId(Long materialId, Long tenantId) {
+        if (materialId == null) {
+            return List.of();
+        }
+        return materialMapper.listMaterialStocksByMaterial(materialId, tenantId(tenantId));
+    }
+
+    /**
      * 调整商品当前库存。
      */
     public void changeCurrentStock(Long materialId, Long depotId, BigDecimal delta, BigDecimal unitPrice, Long tenantId) {

@@ -12,6 +12,9 @@ public class TrendForecastResult {
     private String granularity;
     private Integer historicalPeriods;
     private Integer forecastPeriods;
+    private String downloadUrl;
+    private String reportFileName;
+    private String reportTitle;
     private String method;
     private String confidenceLevel;
     private String warning;
